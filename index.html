@@ -357,7 +357,7 @@ body.recolhido main{grid-template-columns:minmax(0,1fr)}
   </section>
 </div>
 <div>
-  <nav class="tabs"><button id="bRec" title="Recolher/expandir o painel de importação de arquivos">◂ Arquivos</button><button data-tab="apur" class="on">Apuração</button><button data-tab="anos">Anos</button><button data-tab="est">Estatísticas</button><button data-tab="cont">Módulo Contábil</button><span class="sp"></span>
+  <nav class="tabs"><button id="bRec" title="Recolher/expandir o painel de importação de arquivos">◂ Arquivos</button><button data-tab="apur" class="on">Apuração</button><button data-tab="anos">Estimativa - ISS</button><button data-tab="est">Estatísticas</button><button data-tab="cont">Módulo Contábil</button><span class="sp"></span>
    <span class="xp"><button id="contMes" class="mpk" hidden title="Competências do documento — marque um ou mais meses"></button><button id="bLogo" hidden title="Inserir a logomarca no timbre (duplo clique na logomarca do documento remove)">Inserir logomarca</button><input id="iLogo" type="file" accept="image/png,image/jpeg" hidden><button id="bPrn" hidden>Imprimir</button><button id="bXl" title="Exportar este módulo para Excel">Exportar Excel</button><button id="bPdf" class="pri" title="Gerar PDF deste módulo no padrão Unimed Vale do Sepotuba">Gerar PDF</button></span></nav>
   <div class="pan empty" id="semAc" hidden><b>Nenhum módulo liberado para o seu usuário</b>Peça ao administrador para liberar o acesso.</div>
   <div id="tab-apur">
@@ -477,7 +477,7 @@ const PADRAO=[
  {k:"opme",lb:"Fornecedores",ds:"OPME",g:"D",arq:"OPME",cm:"G",cv:"K"},
  {k:"reemb",lb:"Reembolso",ds:"Assistencial",g:"D",arq:"REEMBOLSO",cm:"T",cv:"R"}];
 /* subgrupos: linhas com o mesmo "sg" ficam agrupadas; "ds" é a nomenclatura mostrada ao passar o mouse */
-const SGA={};
+const SGA={};let DADOS_V=0;
 const LL=()=>ST.linhas.concat(ST.virt||[]);
 function segSelLer(){try{return JSON.parse(localStorage.getItem("issqn.segsel")||"{}")||{};}catch(e){return{};}}
 function segSelGravar(o){try{localStorage.setItem("issqn.segsel",JSON.stringify(o));}catch(e){}}
@@ -559,10 +559,13 @@ function parseMes(v){
  if(typeof v==="number"){
   if(Number.isInteger(v)&&v>=1&&v<=12)return{m:v,a:null};
   if(v>59&&v<80000){const d=XLSX.SSF.parse_date_code(v);if(d&&d.m>=1&&d.m<=12)return{m:d.m,a:d.y};}
+  if(Number.isInteger(v)&&v>=199001&&v<=210012&&v%100>=1&&v%100<=12)return{m:v%100,a:Math.floor(v/100)};
+  if(Number.isInteger(v)&&v>=19900101&&v<=21001231){const m=Math.floor(v/100)%100;if(m>=1&&m<=12)return{m,a:Math.floor(v/10000)};}
   return null;}
  const s=norm(v).trim();if(!s)return null;
+ if(/^\d+([.,]0+)?$/.test(s)){const n=parseInt(s,10);if(n>59&&n<80000||(n>=199001&&n<=210012)||(n>=19900101&&n<=21001231))return parseMes(n);}
  let x=s.match(/^(\d{4})[-\/.](\d{1,2})/);if(x&&+x[2]>=1&&+x[2]<=12)return{m:+x[2],a:+x[1]};
- x=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/);if(x&&+x[2]>=1&&+x[2]<=12){let a=+x[3];if(a<100)a+=2000;return{m:+x[2],a};}
+ x=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/);if(x){let a=+x[3];if(a<100)a+=2000;if(+x[2]>=1&&+x[2]<=12)return{m:+x[2],a};if(+x[1]>=1&&+x[1]<=12&&+x[2]>12)return{m:+x[1],a};}
  x=s.match(/^(\d{1,2})[-\/.](\d{2,4})$/);if(x&&+x[1]>=1&&+x[1]<=12){let a=+x[2];if(a<100)a+=2000;return{m:+x[1],a};}
  for(const[n,i]of NOMES)if(s.startsWith(n)){const y=s.match(/(\d{2,4})/);let a=y?+y[1]:null;if(a&&a<100)a+=2000;return{m:i,a};}
  if(/^\d{1,2}$/.test(s)&&+s>=1&&+s<=12)return{m:+s,a:null};
@@ -571,7 +574,7 @@ function parseMes(v){
 const lskey=()=>"issqn.v1."+ST.ano;
 const estKey=()=>"issqn.est."+ST.ano;
 function estLer(){try{return JSON.parse(localStorage.getItem(estKey())||"{}")||{};}catch(e){return{};}}
-function estGravar(o){try{localStorage.setItem(estKey(),JSON.stringify(o));}catch(e){}}
+function estGravar(o){DADOS_V++;try{localStorage.setItem(estKey(),JSON.stringify(o));}catch(e){}}
 const ehEstArq=a=>/ESTIMATIVA/.test(norm(a.nome));
 function lerEstArq(){
  const out={};
@@ -607,7 +610,7 @@ const idbTodos=()=>idbOp("readonly",st=>st.getAll());
 const idbDel=n=>idbOp("readwrite",st=>st.delete(n)).catch(()=>{});
 const idbLimpar=()=>idbOp("readwrite",st=>st.clear()).catch(()=>{});
 const marcaBase=()=>{try{localStorage.setItem("issqn.base.n",String(ST.arqs.length));}catch(e){}};
-function idbGravar(a){setTimeout(marcaBase,0);return idbOp("readwrite",st=>st.put({nome:a.nome,tam:a.tam,buf:a._buf,aba:a.aba,forcada:a.forcada,em:a.em,mod:a.mod||0,pasta:!!a.pasta})).catch(e=>{console.warn(e);alerta("Não foi possível salvar <b>"+esc(a.nome)+"</b> na base deste navegador (espaço insuficiente ou navegador em modo privado). Ele fica disponível só até fechar a página.");});}
+function idbGravar(a){setTimeout(marcaBase,0);return idbOp("readwrite",st=>st.put({nome:a.nome,tam:a.tam,buf:a._buf,aba:a.aba,abas:a.abas,forcada:a.forcada,em:a.em,mod:a.mod||0,pasta:!!a.pasta,rows:(a._r&&a._c===a.aba)?a._r:null,rowsAba:a._c||null,v:2})).catch(e=>{console.warn(e);alerta("Não foi possível salvar <b>"+esc(a.nome)+"</b> na base deste navegador (espaço insuficiente ou navegador em modo privado). Ele fica disponível só até fechar a página.");});}
 function lerWb(nome,buf){
  if(/\.(csv|txt|tsv)$/i.test(nome)){let txt=new TextDecoder("utf-8").decode(buf);if(txt.indexOf("\uFFFD")>=0){try{txt=new TextDecoder("windows-1252").decode(buf);}catch(e){}}return XLSX.read(txt,{type:"string",cellDates:true,raw:true});}
  return XLSX.read(new Uint8Array(buf),{type:"array",cellDates:true,raw:false});
@@ -634,7 +637,7 @@ async function incluirArq(nome,buf,tam,mod,pasta){
  const wb=lerWb(nome,buf),abas=wb.SheetNames,ant=ST.arqs.find(a=>a.nome===nome);
  const a={nome,tam,wb,abas,aba:ant&&abas.indexOf(ant.aba)>=0?ant.aba:abaMaior(wb),forcada:ant?ant.forcada:null,em:Date.now(),mod,pasta:pasta||(ant&&ant.pasta)||false,_buf:buf};
  if(ant)ST.arqs[ST.arqs.indexOf(ant)]=a;else ST.arqs.push(a);
- await idbGravar(a);return a;
+ rows(a);await idbGravar(a);return a;
 }
 /* pasta conectada (como "Obter dados da pasta" do Power Query) */
 let PASTA=null,PASTA_INFO="",pastaRodando=false,pastaUlt=0;
@@ -704,7 +707,9 @@ async function carregarBase(emb){
   l.sort((a,b)=>(a.em||0)-(b.em||0));
   for(const x of l){
    if(ST.arqs.some(a=>a.nome===x.nome))continue;
-   try{const wb=lerWb(x.nome,x.buf),abas=wb.SheetNames,a={nome:x.nome,tam:x.tam,wb,abas,aba:abas.indexOf(x.aba)>=0?x.aba:abas[0],forcada:x.forcada||null,em:x.em,mod:x.mod||0,pasta:!!x.pasta,_buf:x.buf};ST.arqs.push(a);if(fonte==="arquivo"&&idbOk)await idbGravar(a);}
+   try{let a;
+    if(x.rows&&x.rowsAba&&x.rowsAba===x.aba)a={nome:x.nome,tam:x.tam,wb:null,abas:x.abas||[x.aba],aba:x.aba,forcada:x.forcada||null,em:x.em,mod:x.mod||0,pasta:!!x.pasta,_buf:x.buf,_r:x.rows,_c:x.aba};
+    else{const wb=lerWb(x.nome,x.buf),abas=wb.SheetNames;a={nome:x.nome,tam:x.tam,wb,abas,aba:abas.indexOf(x.aba)>=0?x.aba:abas[0],forcada:x.forcada||null,em:x.em,mod:x.mod||0,pasta:!!x.pasta,_buf:x.buf};rows(a);if(idbOk)idbGravar(a);}ST.arqs.push(a);if(fonte==="arquivo"&&idbOk)await idbGravar(a);}
    catch(e){console.warn(x.nome,e);}
   }
  }
@@ -761,16 +766,27 @@ function renderArquivos(){
  });
  ul.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{const a=ST.arqs[+b.dataset.x];if(!confirm("Remover "+a.nome+" da base salva?"+(a.pasta?"\n\nEle continua na pasta conectada: para não voltar na próxima leitura, apague ou mova o arquivo da pasta.":"")))return;ST.arqs.splice(+b.dataset.x,1);idbDel(a.nome);renderArquivos();recalcular();});
  ul.querySelectorAll(".lupa").forEach(b=>b.onclick=()=>inspecionar(+b.dataset.i));
- ul.querySelectorAll("[data-aba]").forEach(s=>s.onchange=()=>{const a=ST.arqs[+s.dataset.aba];a.aba=s.value;idbGravar(a);recalcular();});
+ ul.querySelectorAll("[data-aba]").forEach(s=>s.onchange=()=>{const a=ST.arqs[+s.dataset.aba];a.aba=s.value;rows(a);idbGravar(a);recalcular();});
  ul.querySelectorAll("[data-fc]").forEach(s=>s.onchange=()=>{const a=ST.arqs[+s.dataset.fc];a.forcada=s.value||null;idbGravar(a);renderArquivos();recalcular();});
 }
 
 /* ---------- cálculo ---------- */
 function rows(a){
+ if(a._r&&a._c===a.aba)return a._r;
+ if(!a.wb){if(!a._buf)return[];a.wb=lerWb(a.nome,a._buf);a.abas=a.wb.SheetNames;}
  const ws=a.wb.Sheets[a.aba];if(!ws)return[];
- if(!a._c||a._c!==a.aba){a._r=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null,blankrows:true});a._c=a.aba;}
+ a._r=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null,blankrows:true});a._c=a.aba;a._k=null;
  return a._r;
 }
+/* caches por coluna: cada valor da planilha é interpretado uma única vez */
+function cc(a){const R=rows(a);if(!a._k||a._k.aba!==a.aba||a._k.n!==R.length)a._k={aba:a.aba,n:R.length,pm:{},pv:{},pn:{},ne:null,pk:null};return a._k;}
+function pmCol(a,c){const k=cc(a);if(k.pm[c])return k.pm[c];const R=a._r,n=R.length,m=new Int8Array(n),y=new Int16Array(n);for(let i=0;i<n;i++){const r=R[i];if(!r)continue;const d=parseMes(r[c]);if(d){m[i]=d.m;y[i]=d.a||0;}}return k.pm[c]={m,y};}
+function pvCol(a,c){const k=cc(a);if(k.pv[c])return k.pv[c];const R=a._r,n=R.length,v=new Float64Array(n);for(let i=0;i<n;i++){const r=R[i];if(r)v[i]=parseVal(r[c]);}return k.pv[c]=v;}
+function pnCol(a,c){const k=cc(a);if(k.pn[c])return k.pn[c];const R=a._r,n=R.length,v=new Array(n);for(let i=0;i<n;i++){const r=R[i];v[i]=r?norm(r[c]).trim():"";}return k.pn[c]=v;}
+function neCol(a){const k=cc(a);if(k.ne)return k.ne;const R=a._r,n=R.length,v=new Uint8Array(n);for(let i=0;i<n;i++){const r=R[i];if(r&&r.length)for(const x of r)if(x!==null&&x!==""){v[i]=1;break;}}return k.ne=v;}
+function pkCol(a){const k=cc(a);if(k.pk)return k.pk;const R=a._r,n=R.length,v=new Array(n);for(let i=0;i<n;i++){const r=R[i];v[i]=r?r.map(x=>x instanceof Date?x.getTime():x).join("\u0001"):"";}return k.pk=v;}
+function filtroV(l){const raw=String(l.fv||"").trim();if(!raw)return null;const neg=raw.startsWith("!"),alts=norm(neg?raw.slice(1):raw).split("|").map(x=>x.trim()).filter(Boolean);if(!alts.length)return null;
+ const memo=new Map();return v=>{let h=memo.get(v);if(h===undefined){h=alts.some(a=>(a==="(VAZIO)"||a==="VAZIO")?v==="":(a[0]==="^"?v.startsWith(a.slice(1).trim()):v.includes(a)));h=neg?!h:h;memo.set(v,h);}return h;};}
 function resolveCol(a,spec){
  spec=String(spec||"").trim();if(!spec)return -1;
  if(/^[A-Za-z]{1,3}$/.test(spec))return ci(spec);
@@ -791,37 +807,38 @@ function filtroFn(l,cf){
   const hit=alts.some(a=>(a==="(VAZIO)"||a==="VAZIO")?v==="":(a[0]==="^"?v.startsWith(a.slice(1).trim()):v.includes(a)));
   return neg?!hit:hit;};
 }
-function recalcular(){ST.estArq=lerEstArq();ST.res=calcRes();render();}
+function recalcular(){DADOS_V++;ST.estArq=lerEstArq();ST.res=calcRes();render();}
 function calcRes(){
  const res={};
  for(const l of ST.linhas){
-  const o={m:{},det:{},lin:0,fora:0,filt:0,semMes:0,zero:0,dup:0,arqs:[],cols:"",erro:"",pa:{},seg:{},segc:{}};for(let i=1;i<=12;i++){o.m[i]=0;o.det[i]=[];}
+  const o={m:{},det:{},lin:0,fora:0,filt:0,semMes:0,zero:0,dup:0,arqs:[],cols:"",erro:"",pa:{},seg:{},segc:{},anos:{}};for(let i=1;i<=12;i++){o.m[i]=0;o.det[i]=[];}
   if(l.arq&&l.cm&&l.cv){
    const alvo=ST.arqs.filter(a=>a.forcada?a.forcada===l.k:(!a.forcada&&casa(a,l.arq)));
    const vistos=alvo.length>1&&ST.dedup!==false?new Map():null;
    for(const a of alvo){
-    o.arqs.push(a.nome);const P=o.pa[a.nome]={lin:0,fora:0,filt:0,semMes:0,zero:0,dup:0,v:0,ms:new Set(),erro:"",tot:0};
+    o.arqs.push(a.nome);const P=o.pa[a.nome]={lin:0,fora:0,filt:0,semMes:0,zero:0,dup:0,v:0,ms:new Set(),erro:"",tot:0,anos:{}};
     const cm=resolveCol(a,l.cm),cv=String(l.cv).split(/[,;]+/).map(s=>resolveCol(a,s)).filter(i=>i>=0),cf=l.cf?resolveCol(a,l.cf):-1;
     o.cols="mes "+(cm>=0?letra(cm):"?")+" · valor "+(cv.length?cv.map(letra).join("+"):"?")+(l.cf?" · filtro "+(cf>=0?letra(cf):"?"):"");
     if(cm<0){o.erro=P.erro="coluna de mês não localizada";continue;}
     if(!cv.length){o.erro=P.erro="coluna de valor não localizada";continue;}
     if(l.cf&&cf<0){o.erro=P.erro="coluna do filtro não localizada";continue;}
-    const ff=filtroFn(l,cf),sc=l.seg?resolveCol(a,l.seg):-1;if(sc>=0)o.segc[a.nome]=sc;
-    const R=rows(a),hi=cabecalho(a).i;
+    const ff=cf>=0?filtroV(l):null,sc=l.seg?resolveCol(a,l.seg):-1;if(sc>=0)o.segc[a.nome]=sc;
+    const R=rows(a),hi=cabecalho(a).i,PM=pmCol(a,cm),PV=cv.map(c=>pvCol(a,c)),PN=ff?pnCol(a,cf):null,NE=neCol(a),PK=vistos?pkCol(a):null,fa=ST.fano,an=ST.ano;
     for(let ri=0;ri<R.length;ri++){
-     const r=R[ri];
-     if(!r||!r.length)continue;
-     const d=parseMes(r[cm]);
-     const cab0=ri<=hi;if(!cab0&&r.some(x=>x!==null&&x!==""))P.tot++;
-     if(!d){if(!cab0&&r.some(x=>x!==null&&x!=="")){o.semMes++;P.semMes++;}continue;}
-     if(ff&&!ff(r)){o.filt++;P.filt++;continue;}
-     if(ST.fano&&d.a&&d.a!==ST.ano){o.fora++;P.fora++;continue;}
-     let v=0;for(const c of cv)v+=parseVal(r[c]);
+     if(!NE[ri])continue;
+     const mm=PM.m[ri],ya=PM.y[ri];
+     const cab0=ri<=hi;if(!cab0)P.tot++;
+     if(!mm){if(!cab0){o.semMes++;P.semMes++;}continue;}
+     if(ff&&!ff(PN[ri])){o.filt++;P.filt++;continue;}
+     if(ya){o.anos[ya]=(o.anos[ya]||0)+1;P.anos[ya]=(P.anos[ya]||0)+1;}
+     if(fa&&ya&&ya!==an){o.fora++;P.fora++;continue;}
+     let v=0;for(let j=0;j<PV.length;j++)v+=PV[j][ri];
      if(!v){o.zero++;P.zero++;continue;}
-     if(vistos){const ch=d.m+""+r.map(x=>x instanceof Date?x.getTime():x).join(""),f0=vistos.get(ch);if(f0!==undefined&&f0!==a.nome){o.dup++;P.dup++;continue;}if(f0===undefined)vistos.set(ch,a.nome);}
-     o.m[d.m]+=v;o.lin++;P.lin++;P.v+=v;P.ms.add(d.m+(d.a&&d.a!==ST.ano?"/"+d.a:""));
-     o.det[d.m].push({f:a.nome,ln:ri+1,v,r});
-     if(sc>=0){const sk=String(r[sc]==null?"":r[sc]).trim()||"(sem classificação)",sg2=o.seg[sk]=o.seg[sk]||{};sg2[d.m]=(sg2[d.m]||0)+v;}
+     const r=R[ri];
+     if(vistos){const ch=mm+"\u0002"+PK[ri],f0=vistos.get(ch);if(f0!==undefined&&f0!==a.nome){o.dup++;P.dup++;continue;}if(f0===undefined)vistos.set(ch,a.nome);}
+     o.m[mm]+=v;o.lin++;P.lin++;P.v+=v;P.ms.add(mm+(ya&&ya!==an?"/"+ya:""));
+     o.det[mm].push({f:a.nome,ln:ri+1,v,r});
+     if(sc>=0){const sk=String(r[sc]==null?"":r[sc]).trim()||"(sem classificação)",sg2=o.seg[sk]=o.seg[sk]||{};sg2[mm]=(sg2[mm]||0)+v;}
     }
    }
   }
@@ -909,17 +926,17 @@ function confLinhas(){
 const msTxt=P=>[...P.ms].sort((x,y)=>parseInt(x)-parseInt(y)).map(x=>{const[m,a]=String(x).split("/");return ABR[+m]+(a?"/"+a.slice(2):"");}).join(", ");
 function conferir(){
  const so=$("#confSo").checked,ls=confLinhas();
- let h='<table><thead><tr><th>Arquivo</th><th>Aba</th><th>Linha da apuração</th><th class="n">Linhas com dados</th><th class="n">Somados</th><th class="n">Valor somado</th><th>Meses</th><th class="n">Sem data</th><th class="n">Outro ano</th><th class="n">Fora do filtro</th><th class="n">Valor zero</th><th class="n">Repetidos</th></tr></thead><tbody>';
+ let h='<table><thead><tr><th>Arquivo</th><th>Aba</th><th>Linha da apuração</th><th class="n">Linhas com dados</th><th class="n">Somados</th><th class="n">Valor somado</th><th>Meses</th><th class="n">Sem data</th><th class="n">Outro ano</th><th>Anos na competência</th><th class="n">Fora do filtro</th><th class="n">Valor zero</th><th class="n">Repetidos</th></tr></thead><tbody>';
  let n=0;
  for(const x of ls){
   const P=x.P,fora=P?P.semMes+P.fora+P.dup:0;
   if(so&&x.l&&!fora&&!P.erro)continue;
   n++;const nm='<b title="'+esc(x.a.nome).replace(/"/g,"&quot;")+'">'+esc(x.a.nome.length>60?"…"+x.a.nome.slice(-58):x.a.nome)+"</b>";
-  if(!x.l&&ehEstArq(x.a)){const y=lerEstArq(),an=Object.keys(y).sort();h+='<tr class="fa"><td>'+nm+"</td><td>"+esc(x.a.aba)+'</td><td colspan="10" class="'+(an.length?"ok":"nr")+'">'+(an.length?"ISS pago por estimativa — "+an.length+" anos lidos ("+an.join(", ")+")":"planilha de estimativa sem a linha de cabeçalho “Ano | Jan | Fev …”")+"</td></tr>";continue;}
-  if(!x.l){h+='<tr class="fa"><td>'+nm+"</td><td>"+esc(x.a.aba)+'</td><td class="nr" colspan="10">nome não reconhecido — este arquivo NÃO entra na apuração. Vincule-o a uma linha na lista de arquivos ou ajuste "Arquivo contém" no mapeamento.</td></tr>';continue;}
+  if(!x.l&&ehEstArq(x.a)){const y=lerEstArq(),an=Object.keys(y).sort();h+='<tr class="fa"><td>'+nm+"</td><td>"+esc(x.a.aba)+'</td><td colspan="11" class="'+(an.length?"ok":"nr")+'">'+(an.length?"ISS pago por estimativa — "+an.length+" anos lidos ("+an.join(", ")+")":"planilha de estimativa sem a linha de cabeçalho “Ano | Jan | Fev …”")+"</td></tr>";continue;}
+  if(!x.l){h+='<tr class="fa"><td>'+nm+"</td><td>"+esc(x.a.aba)+'</td><td class="nr" colspan="11">nome não reconhecido — este arquivo NÃO entra na apuração. Vincule-o a uma linha na lista de arquivos ou ajuste "Arquivo contém" no mapeamento.</td></tr>';continue;}
   h+="<tr"+(x.pri?' class="fa"':"")+"><td>"+(x.pri?nm:"")+"</td><td>"+(x.pri?esc(x.a.aba)+(x.a.abas.length>1?' <span class="ruim" title="Só a aba escolhida é lida: '+esc(x.a.abas.join(", ")).replace(/"/g,"&quot;")+'">(+'+(x.a.abas.length-1)+" abas)</span>":""):"")+"</td><td>"+esc(x.l.lb)+"</td>"+
-   (P.erro?'<td class="nr" colspan="9">'+esc(P.erro)+" — confira o mapeamento</td>":
-   '<td class="n">'+P.tot.toLocaleString("pt-BR")+'</td><td class="n '+(P.lin?"ok":"ruim")+'">'+P.lin.toLocaleString("pt-BR")+'</td><td class="n">'+fmt(P.v)+"</td><td>"+(msTxt(P)||'<span class="ruim">nenhum</span>')+'</td><td class="n'+(P.semMes?" ruim":"")+'">'+(P.semMes||"")+'</td><td class="n'+(P.fora?" ruim":"")+'">'+(P.fora||"")+'</td><td class="n">'+(P.filt||"")+'</td><td class="n">'+(P.zero||"")+'</td><td class="n'+(P.dup?" ruim":"")+'">'+(P.dup||"")+"</td>")+"</tr>";
+   (P.erro?'<td class="nr" colspan="10">'+esc(P.erro)+" — confira o mapeamento</td>":
+   '<td class="n">'+P.tot.toLocaleString("pt-BR")+'</td><td class="n '+(P.lin?"ok":"ruim")+'">'+P.lin.toLocaleString("pt-BR")+'</td><td class="n">'+fmt(P.v)+"</td><td>"+(msTxt(P)||'<span class="ruim">nenhum</span>')+'</td><td class="n'+(P.semMes?" ruim":"")+'">'+(P.semMes||"")+'</td><td class="n'+(P.fora?" ruim":"")+'">'+(P.fora||"")+"</td><td"+(P.lin?"":' class="ruim"')+">"+(Object.keys(P.anos).sort().join(", ")||"—")+'</td><td class="n">'+(P.filt||"")+'</td><td class="n">'+(P.zero||"")+'</td><td class="n'+(P.dup?" ruim":"")+'">'+(P.dup||"")+"</td>")+"</tr>";
  }
  h+="</tbody></table>";
  const nr=ls.filter(x=>!x.l).length,semM=ls.filter(x=>x.P&&x.P.semMes).length,out=ls.filter(x=>x.P&&x.P.fora).length;
@@ -1353,6 +1370,7 @@ function contadores(){
   if(o.semMes)ex.push(o.semMes+" sem data válida");
   if(o.zero)ex.push(o.zero+" com valor zero");
   if(o.dup)ex.push(o.dup+" repetidos em outro arquivo (ignorados)");
+  const ya=Object.keys(o.anos).sort();if(o.fora&&ya.length)ex.push("anos encontrados: "+ya.map(y=>y+(+y===ST.ano?"":"")+" ("+o.anos[y].toLocaleString("pt-BR")+")").join(", "));
   let nm=0;for(let i=1;i<=12;i++)if(o.det[i]&&o.det[i].length)nm++;
   const susp=nm===1&&o.lin>300;
   sp.className="cnt"+(o.lin&&!susp?"":" zero");
@@ -1835,11 +1853,11 @@ function estDados(){
  return{ms,R,D,I,ind,evo,m,cmp};
 }
 /* ---------- Anos: histórico de todos os anos ---------- */
-const IND=[["R","Receitas"],["D","Despesas"],["B","Base de cálculo"],["I","ISS devido"],["E","ISS pago por estimativa"]];let indAt="I",HIST=null;
+const IND=[["R","Receitas"],["D","Despesas"],["B","Base de cálculo"],["I","ISS devido"],["E","ISS pago por estimativa"]];let indAt="E",HIST=null,HIST_V=-1;
 function anosNaBase(){
  const ys=new Set();
  for(const l of ST.linhas){if(l.info||!l.arq||!l.cm)continue;
-  for(const a of ST.arqs.filter(x=>x.forcada?x.forcada===l.k:(!x.forcada&&casa(x,l.arq)))){const cm=resolveCol(a,l.cm);if(cm<0)continue;for(const r of rows(a)){if(!r)continue;const d=parseMes(r[cm]);if(d&&d.a)ys.add(d.a);}}}
+  for(const a of ST.arqs.filter(x=>x.forcada?x.forcada===l.k:(!x.forcada&&casa(x,l.arq)))){const cm=resolveCol(a,l.cm);if(cm<0)continue;const Y=pmCol(a,cm).y;for(let i=0;i<Y.length;i++)if(Y[i])ys.add(Y[i]);}}
  Object.keys(ST.estArq||{}).forEach(y=>ys.add(+y));
  return [...ys].filter(y=>y>1990&&y<2100).sort((a,b)=>a-b);
 }
@@ -1857,9 +1875,9 @@ function histAnos(){
 }
 const smA=a=>a.reduce((s,v)=>s+v,0);
 function anosTab(){
- $("#anosInfo").textContent="calculando…";
+ if(!(HIST&&HIST_V===DADOS_V))$("#anosInfo").textContent="calculando…";
  setTimeout(()=>{
-  HIST=histAnos();const H=HIST;
+  if(!(HIST&&HIST_V===DADOS_V)){HIST=histAnos();HIST_V=DADOS_V;}const H=HIST;
   if(!H.length){$("#anosRes").innerHTML='<tbody><tr><td class="hint">Sem dados. Carregue as planilhas.</td></tr></tbody>';$("#anosMes").innerHTML="";$("#anosInfo").textContent="";return;}
   $("#anosInfo").textContent=H.length+(H.length>1?" anos":" ano")+" · "+H[0].ano+" a "+H[H.length-1].ano+" · o ISS soma a apuração de cada mês com a alíquota de cada ano";
   const tR=k=>smA(H.map(h=>smA(h[k])));
