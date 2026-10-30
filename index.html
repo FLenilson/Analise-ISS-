@@ -123,6 +123,7 @@ table{border-collapse:collapse;width:100%}
 .tabs{display:flex;gap:4px;margin-bottom:8px}
 .tabs button{border-radius:4px 4px 0 0;padding:5px 14px;font-weight:500}
 .tabs button.on{background:var(--acc2);border-color:var(--acc2);color:#fff}
+.ecF{display:flex;gap:8px;align-items:center;margin-bottom:5px}.ecF .lb{min-width:44px;font-size:11px;color:var(--mut)}.ecF .chips button{padding:1px 8px;font-size:11.5px}#ecTab tr.foco td{background:color-mix(in srgb,var(--acc) 12%,transparent)}#ecTab tbody tr:not(.cons){cursor:pointer}td.pos{color:var(--desp)}td.neg{color:var(--acc)}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:7px}
 .card{border:1px solid var(--line2);border-radius:4px;padding:6px 8px;background:var(--pan2)}
 .card b{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em}
@@ -362,7 +363,7 @@ body.recolhido main{grid-template-columns:minmax(0,1fr)}
   <div class="pan empty" id="semAc" hidden><b>Nenhum módulo liberado para o seu usuário</b>Peça ao administrador para liberar o acesso.</div>
   <div id="tab-apur">
   <section class="pan">
-    <div class="rowbar"><h2 style="font-size:12px;padding:0;border:0">Resumo mês a mês</h2><span class="hint" id="sts"></span><span class="sp"></span><button id="bov" hidden>Limpar ajustes manuais</button></div>
+    <div class="rowbar"><h2 style="font-size:12px;padding:0;border:0">Resumo mês a mês</h2><button id="mtzMes" class="mpk" title="Escolha os meses que aparecem na tabela — o total passa a somar só esses meses"></button><span class="hint" id="sts"></span><span class="sp"></span><button id="bov" hidden>Limpar ajustes manuais</button></div>
     <div id="alerta"></div>
     <div class="scr" id="wmtz"><table id="mtz"></table></div>
     <div class="empty" id="vazio"><b>Nenhuma planilha carregada</b><span id="vzTx">O sistema identifica cada arquivo pelo nome, soma as colunas indicadas por mês e monta a base de cálculo.</span><div id="vzBt" style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"></div><p class="hint" id="vzAv" style="margin:10px auto 0;max-width:620px"></p></div>
@@ -379,7 +380,20 @@ body.recolhido main{grid-template-columns:minmax(0,1fr)}
     <div class="scr"><table class="anT" id="anosMes"></table></div></section>
   </div>
   <div id="tab-est" hidden>
-   <section class="pan"><h2>Indicadores do exercício</h2><div class="bd"><div class="cards" id="cards"></div></div></section>
+   <section class="pan"><h2>Comparativo entre anos — ISS apurado × estimativa <span class="n" id="ecInfo"></span></h2>
+    <div class="bd">
+     <div class="ecF"><span class="lb">Anos</span><div class="chips" id="ecAnos"></div></div>
+     <div class="ecF"><span class="lb">Meses</span><div class="chips" id="ecMes"></div></div>
+     <div class="cards" id="ecCards" style="margin-top:8px"></div>
+     <div id="ecGraf" style="margin-top:8px"></div>
+    </div>
+    <div class="scr"><table class="anT" id="ecTab"></table></div>
+   </section>
+   <section class="pan" style="margin-top:10px"><h2>Mês a mês — apurado × estimativa <span class="n" id="ecFocoT"></span></h2>
+    <div class="bd" style="padding-bottom:0"><div class="chips" id="ecFoco"></div><div id="ecGrafM" style="margin-top:8px"></div></div>
+    <div class="scr"><table class="anT" id="ecMesT"></table></div>
+   </section>
+   <section class="pan" style="margin-top:10px"><h2>Indicadores do exercício <span class="n" id="estAnoT"></span></h2><div class="bd"><div class="cards" id="cards"></div></div></section>
    <section class="pan" style="margin-top:10px"><h2>Receitas × despesas por mês <span class="n">clique numa barra para abrir a camada do mês</span></h2><div class="bd" id="graf"></div></section>
    <section class="pan" style="margin-top:10px"><h2>Camadas</h2>
     <div class="bd">
@@ -479,7 +493,8 @@ const PADRAO=[
 /* subgrupos: linhas com o mesmo "sg" ficam agrupadas; "ds" é a nomenclatura mostrada ao passar o mouse */
 const SGA={};let DADOS_V=0;
 const LL=()=>ST.linhas.concat(ST.virt||[]);
-function segSelLer(){try{return JSON.parse(localStorage.getItem("issqn.segsel")||"{}")||{};}catch(e){return{};}}
+const segNome=v=>String(v==null?"":v).trim().replace(/assitencial/gi,m=>m===m.toUpperCase()?"ASSISTENCIAL":m[0]==="A"?"Assistencial":"assistencial")||"(sem classificação)";
+function segSelLer(){try{const o=JSON.parse(localStorage.getItem("issqn.segsel")||"{}")||{};for(const k in o)if(Array.isArray(o[k]))o[k]=[...new Set(o[k].map(segNome))];return o;}catch(e){return{};}}
 function segSelGravar(o){try{localStorage.setItem("issqn.segsel",JSON.stringify(o));}catch(e){}}
 const fatOn=pk=>{const v=segSelLer()["__fat:"+pk];return v!==false;};
 function montarVirt(res){
@@ -492,7 +507,7 @@ function montarVirt(res){
   if(on)nv.lin=orig.lin;
   for(const sg of Object.keys(o.seg)){
    const k="seg:"+f.k+":"+sg,r={m:{},det:{},lin:0,arqs:o.arqs.slice(),cols:o.cols,erro:"",pa:{},seg:{},segc:o.segc,fora:0,filt:0,semMes:0,zero:0,dup:0};
-   for(let m=1;m<=12;m++){r.det[m]=(o.det[m]||[]).filter(x=>{const ci=o.segc[x.f];return ci!=null&&(String(x.r[ci]==null?"":x.r[ci]).trim()||"(sem classificação)")===sg;});r.m[m]=r.det[m].reduce((s2,x)=>s2+x.v,0);r.lin+=r.det[m].length;}
+   for(let m=1;m<=12;m++){r.det[m]=(o.det[m]||[]).filter(x=>{const ci=o.segc[x.f];return ci!=null&&segNome(x.r[ci])===sg;});r.m[m]=r.det[m].reduce((s2,x)=>s2+x.v,0);r.lin+=r.det[m].length;}
    res[k]=r;vt.push({k,lb:sg,ds:"Classificação do "+f.lb,g:pai.g,info:true,virt:true,pai:pai.k});
    if(marc.has(sg)){for(let m=1;m<=12;m++){nv.m[m]+=r.m[m];nv.det[m]=nv.det[m].concat(r.det[m]);}nv.lin+=r.lin;o.arqs.forEach(a=>{if(nv.arqs.indexOf(a)<0)nv.arqs.push(a);});}
   }
@@ -577,18 +592,19 @@ function estLer(){try{return JSON.parse(localStorage.getItem(estKey())||"{}")||{
 function estGravar(o){DADOS_V++;try{localStorage.setItem(estKey(),JSON.stringify(o));}catch(e){}}
 const ehEstArq=a=>/ESTIMATIVA/.test(norm(a.nome));
 function lerEstArq(){
- const out={};
- for(const a of ST.arqs.filter(ehEstArq)){
+ const out={},src={};
+ for(const a of ST.arqs.filter(ehEstArq).sort((x,y)=>(x.mod||x.em||0)-(y.mod||y.em||0))){const vis={};
   const R2=rows(a);let hi=-1,ca=-1,cm={};
   for(let i=0;i<Math.min(R2.length,30)&&hi<0;i++){const r=R2[i]||[];const mm={};let ya=-1;r.forEach((v,c)=>{const t=norm(v).trim();if(t==="ANO"||t==="EXERCICIO")ya=c;else{const n=NOMES.find(([p])=>t.startsWith(p));if(n&&t.length<=9)mm[n[1]]=c;}});if(ya>=0&&Object.keys(mm).length>=6){hi=i;ca=ya;cm=mm;}}
   if(hi<0)continue;
-  for(let i=hi+1;i<R2.length;i++){const r=R2[i]||[];const y=parseInt(r[ca]);if(!(y>1990&&y<2100))continue;out[y]=out[y]||{};for(const m in cm){const v=parseVal(r[cm[m]]);if(v)out[y][m]=(out[y][m]||0)+v;}}
+  for(let i=hi+1;i<R2.length;i++){const r=R2[i]||[];const y=parseInt(r[ca]);if(!(y>1990&&y<2100))continue;if(!vis[y]){vis[y]=1;out[y]={};src[y]={};}for(const m in cm){const v=parseVal(r[cm[m]]);if(!v)continue;out[y][m]=(out[y][m]||0)+v;src[y][m]=a.nome;}}
  }
- return out;
+ out._src=src;return out;
 }
+const estSrc=m=>{const s=(ST.estArq||{})._src||{};return(s[ST.ano]||{})[m]||"";};
 const estArqM=m=>{const y=(ST.estArq||{})[ST.ano];return y&&typeof y[m]==="number"?y[m]:0;};
 const estManual=m=>{const v=estLer()[m];return typeof v==="number";};
-const estM=m=>{const v=estLer()[m];return typeof v==="number"?v:estArqM(m);};
+const estM=m=>{const p=estArqM(m);if(p)return p;const v=estLer()[m];return typeof v==="number"?v:0;};
 const difM=m=>impM(m)-estM(m);
 function salvar(){try{localStorage.setItem("issqn.v5.linhas",JSON.stringify(ST.linhas));localStorage.setItem(lskey(),JSON.stringify({aliq:ST.aliq,fano:ST.fano,ov:ST.ov,alvo:ST.alvo}));}catch(e){}}
 function carregarAno(){ST.ov={};ST.alvo={};try{const d=JSON.parse(localStorage.getItem(lskey())||"{}");if(d.ov)ST.ov=d.ov;if(d.alvo)ST.alvo=d.alvo;if(typeof d.aliq==="number")ST.aliq=d.aliq;if(typeof d.fano==="boolean")ST.fano=d.fano;}catch(e){}$("#aliq").value=ST.aliq;$("#fano").checked=ST.fano;}
@@ -838,7 +854,7 @@ function calcRes(){
      if(vistos){const ch=mm+"\u0002"+PK[ri],f0=vistos.get(ch);if(f0!==undefined&&f0!==a.nome){o.dup++;P.dup++;continue;}if(f0===undefined)vistos.set(ch,a.nome);}
      o.m[mm]+=v;o.lin++;P.lin++;P.v+=v;P.ms.add(mm+(ya&&ya!==an?"/"+ya:""));
      o.det[mm].push({f:a.nome,ln:ri+1,v,r});
-     if(sc>=0){const sk=String(r[sc]==null?"":r[sc]).trim()||"(sem classificação)",sg2=o.seg[sk]=o.seg[sk]||{};sg2[mm]=(sg2[mm]||0)+v;}
+     if(sc>=0){const sk=segNome(r[sc]),sg2=o.seg[sk]=o.seg[sk]||{};sg2[mm]=(sg2[mm]||0)+v;}
     }
    }
   }
@@ -855,6 +871,10 @@ function despM(m){let s=0;for(const l of LL())if(l.g==="D"&&!l.info)s+=Math.abs(
 const baseM=m=>recM(m)-despM(m);
 const impM=m=>Math.max(baseM(m),0)*(ST.aliq/100);
 const somaAno=f=>{let s=0;for(let m=1;m<=12;m++)s+=f(m);return s;};
+const MZf=()=>{const e=document.getElementById("mtzMes");return !!(e&&e._sel&&e._sel.length&&e._sel.length<12);};
+const MZ=()=>MZf()?document.getElementById("mtzMes")._sel.slice().sort((x,y)=>x-y):[1,2,3,4,5,6,7,8,9,10,11,12];
+const MZa=()=>MZf()?MZ():0;
+const sMZ=f=>{let s=0;for(const m of MZ())s+=f(m);return s;};
 const ativos=()=>{const a=[];for(let m=1;m<=12;m++)if(recM(m)||despM(m))a.push(m);return a;};
 
 /* ---------- inspetor ---------- */
@@ -1211,6 +1231,92 @@ function estat(){
  $("#cam1").querySelectorAll("[data-ca]").forEach(b=>b.onclick=()=>{camSel=b.dataset.ca==="tudo"?ms.slice():ms.slice(0,1);camada();});
  camada(null,true);
  evolucao(ms);
+ $("#estAnoT").textContent=String(ST.ano);
+ ecomp();
+}
+/* comparativo entre anos: apurado × estimativa */
+const EC={anos:null,ms:[],foco:null};
+function ecDados(){
+ if(!(HIST&&HIST_V===DADOS_V)){HIST=histAnos();HIST_V=DADOS_V;}
+ const H=HIST,todos=H.map(h=>h.ano);
+ if(!EC.anos)EC.anos=new Set(todos);
+ const ms=EC.ms.length?EC.ms.slice().sort((a,b)=>a-b):[1,2,3,4,5,6,7,8,9,10,11,12];
+ const sm=(arr)=>ms.reduce((s,m)=>s+(arr[m-1]||0),0);
+ const lin=H.filter(h=>EC.anos.has(h.ano)).map(h=>({ano:h.ano,aliq:h.aliq,R:sm(h.R),D:sm(h.D),B:sm(h.B),I:sm(h.I),E:sm(h.E),mI:h.I,mE:h.E}));
+ return{H,todos,ms,lin};
+}
+function ecomp(){
+ const {H,todos,ms,lin}=ecDados();
+ if(!H.length){$("#ecInfo").textContent="";["#ecAnos","#ecMes","#ecCards","#ecGraf","#ecFoco","#ecGrafM"].forEach(x=>$(x).innerHTML="");$("#ecTab").innerHTML='<tbody><tr><td class="hint">Sem dados. Carregue as planilhas.</td></tr></tbody>';$("#ecMesT").innerHTML="";return;}
+ $("#ecAnos").innerHTML=todos.map(y=>'<button data-y="'+y+'"'+(EC.anos.has(y)?' class="on"':"")+">"+y+"</button>").join("")+'<span style="width:8px"></span><button data-ya="t">Todos</button><button data-ya="u" title="Últimos 3 anos">Últimos 3</button>';
+ $("#ecAnos").querySelectorAll("[data-y]").forEach(b=>b.onclick=()=>{const y=+b.dataset.y;EC.anos.has(y)?EC.anos.delete(y):EC.anos.add(y);if(!EC.anos.size)EC.anos.add(y);ecomp();});
+ $("#ecAnos").querySelectorAll("[data-ya]").forEach(b=>b.onclick=()=>{EC.anos=new Set(b.dataset.ya==="t"?todos:todos.slice(-3));ecomp();});
+ const tri=[["1º tri",[1,2,3]],["2º tri",[4,5,6]],["3º tri",[7,8,9]],["4º tri",[10,11,12]],["1º sem",[1,2,3,4,5,6]],["2º sem",[7,8,9,10,11,12]]];
+ $("#ecMes").innerHTML=ABR.slice(1).map((a,i)=>'<button data-m="'+(i+1)+'"'+(EC.ms.indexOf(i+1)>=0?' class="on"':"")+">"+a+"</button>").join("")+'<span style="width:8px"></span><button data-ma=""'+(EC.ms.length?"":' class="on"')+'>Ano inteiro</button>'+tri.map(([t,v])=>'<button data-ma="'+v.join(",")+'">'+t+"</button>").join("")+'<button data-ma="ytd" title="Meses já apurados no ano mais recente — compara todos os anos no mesmo período">Mesmo período do ano atual</button>';
+ $("#ecMes").querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{const m=+b.dataset.m,i=EC.ms.indexOf(m);i>=0?EC.ms.splice(i,1):EC.ms.push(m);ecomp();});
+ $("#ecMes").querySelectorAll("[data-ma]").forEach(b=>b.onclick=()=>{const v=b.dataset.ma;if(v==="ytd"){const u=H[H.length-1],a=[];u.I.forEach((x,i)=>{if(x||u.R[i]||u.D[i])a.push(i+1);});EC.ms=a.length?[...Array(Math.max(...a)).keys()].map(i=>i+1):[];}else EC.ms=v?v.split(",").map(Number):[];ecomp();});
+ const per=EC.ms.length?(ms.length===12?"ano inteiro":ms.every((x,i)=>!i||x===ms[i-1]+1)?ABR[ms[0]]+" a "+ABR[ms[ms.length-1]]:ms.map(x=>ABR[x]).join(", ")):"ano inteiro";
+ $("#ecInfo").textContent=lin.length+(lin.length>1?" anos":" ano")+" · "+per;
+ const tI=smA(lin.map(x=>x.I)),tE=smA(lin.map(x=>x.E)),cE=lin.filter(x=>x.E&&x.I);
+ const card=(c,t,v,sub)=>'<div class="card '+c+'"><span>'+t+"</span><b>"+v+"</b>"+(sub?"<span>"+sub+"</span>":"")+"</div>";
+ const mxD=lin.filter(x=>x.E).sort((a,b)=>Math.abs(b.I-b.E)-Math.abs(a.I-a.E))[0];
+ $("#ecCards").innerHTML=card("i","ISS apurado",rs(tI),per)+card("","ISS pago por estimativa",rs(tE),cE.length+" de "+lin.length+" anos com estimativa")+
+  card(tI-tE>0?"d":"i","Apurado − estimativa",tE?rs(tI-tE):"–",tE?(tI-tE>0?"apurado acima do estimado":"estimativa acima do apurado"):"")+
+  card("","Estimativa ÷ apurado",tI&&tE?fmt(tE/tI*100)+"%":"–","quanto da apuração a estimativa cobre")+
+  card("","Maior diferença",mxD?rs(mxD.I-mxD.E):"–",mxD?String(mxD.ano):"");
+ $("#ecGraf").innerHTML=ecBarras(lin.map(x=>({t:String(x.ano),a:x.I,b:x.E,k:x.ano})),"ISS apurado","ISS pago por estimativa");
+ $("#ecGraf").querySelectorAll(".mg").forEach(g=>g.onclick=()=>{EC.foco=+g.dataset.k;ecomp();});
+ let h='<thead><tr><th>Ano</th><th>Receitas</th><th>Despesas</th><th>Sinistralidade</th><th>Base de cálculo</th><th>ISS apurado</th><th>ISS estimativa</th><th>Apurado − estimativa</th><th>Estimativa ÷ apurado</th><th>Var. ISS s/ ano ant.</th><th>Alíquota</th></tr></thead><tbody>';
+ const c=(v,cl)=>"<td"+(cl?' class="'+cl+'"':v?"":' class="zero"')+">"+(v?fmt(v):"–")+"</td>";
+ let ant=null;
+ if(EC.foco==null||!lin.some(x=>x.ano===EC.foco))EC.foco=(lin.find(x=>x.ano===ST.ano)||lin[lin.length-1]||{}).ano;
+ lin.forEach(x=>{const df=x.E?x.I-x.E:0,vr=ant?(x.I-ant)/Math.abs(ant)*100:null;
+  h+='<tr data-y="'+x.ano+'"'+(x.ano===EC.foco?' class="foco"':"")+' title="Clique para ver o mês a mês de '+x.ano+'"><td>'+x.ano+"</td>"+c(x.R)+c(x.D)+"<td>"+(x.R?fmt(x.D/x.R*100)+"%":"–")+"</td>"+c(x.B)+c(x.I)+c(x.E)+c(df,x.E?(df>0?"pos":"neg"):"zero")+"<td>"+(x.E&&x.I?fmt(x.E/x.I*100)+"%":"–")+"</td><td>"+(vr===null?"–":(vr>0?"+":"")+fmt(vr)+"%")+"</td><td>"+fmt(x.aliq)+"%</td></tr>";
+  if(x.I)ant=x.I;});
+ const T=k=>smA(lin.map(x=>x[k]));
+ h+='<tr class="cons"><td>Total</td>'+c(T("R"))+c(T("D"))+"<td>"+(T("R")?fmt(T("D")/T("R")*100)+"%":"–")+"</td>"+c(T("B"))+c(tI)+c(tE)+c(tE?tI-tE:0)+"<td>"+(tI&&tE?fmt(tE/tI*100)+"%":"–")+"</td><td></td><td></td></tr></tbody>";
+ $("#ecTab").innerHTML=h;
+ $("#ecTab").querySelectorAll("tr[data-y]").forEach(r=>r.onclick=()=>{EC.foco=+r.dataset.y;ecomp();});
+ ecMes(lin,ms);
+}
+function ecMes(lin,ms){
+ const x=lin.find(l=>l.ano===EC.foco);
+ $("#ecFoco").innerHTML=lin.map(l=>'<button data-y="'+l.ano+'"'+(l.ano===EC.foco?' class="on"':"")+">"+l.ano+"</button>").join("");
+ $("#ecFoco").querySelectorAll("button").forEach(b=>b.onclick=()=>{EC.foco=+b.dataset.y;ecomp();});
+ if(!x){$("#ecFocoT").textContent="";$("#ecGrafM").innerHTML="";$("#ecMesT").innerHTML="";return;}
+ $("#ecFocoT").textContent=String(x.ano);
+ $("#ecGrafM").innerHTML=ecBarras(ms.map(m=>({t:ABR[m],a:x.mI[m-1],b:x.mE[m-1],k:m})),"ISS apurado","ISS pago por estimativa");
+ let h='<thead><tr><th>Mês</th><th>ISS apurado</th><th>ISS estimativa</th><th>Apurado − estimativa</th><th>Estimativa ÷ apurado</th><th>Diferença acumulada</th></tr></thead><tbody>',ac=0;
+ ms.forEach(m=>{const i=x.mI[m-1]||0,e=x.mE[m-1]||0,d=e?i-e:0;ac+=d;
+  h+="<tr><td>"+MES[m]+"</td><td"+(i?"":' class="zero"')+">"+(i?fmt(i):"–")+"</td><td"+(e?"":' class="zero"')+">"+(e?fmt(e):"–")+'</td><td class="'+(e?(d>0?"pos":"neg"):"zero")+'">'+(e?fmt(d):"–")+"</td><td>"+(i&&e?fmt(e/i*100)+"%":"–")+'</td><td class="'+(ac>0?"pos":ac<0?"neg":"zero")+'">'+(ac?fmt(ac):"–")+"</td></tr>";});
+ h+='<tr class="cons"><td>Total</td><td>'+fmt(x.I)+"</td><td>"+fmt(x.E)+"</td><td>"+(x.E?fmt(x.I-x.E):"–")+"</td><td>"+(x.I&&x.E?fmt(x.E/x.I*100)+"%":"–")+"</td><td></td></tr></tbody>";
+ $("#ecMesT").innerHTML=h;
+}
+function ecPer(){const {ms}=ecDados();return{ms,per:EC.ms.length&&ms.length<12?(ms.every((x,i)=>!i||x===ms[i-1]+1)?ABR[ms[0]]+" a "+ABR[ms[ms.length-1]]:ms.map(x=>ABR[x]).join(", ")):"ano inteiro"};}
+function ecTabs(){
+ const {lin,ms}=ecDados();if(!lin.length)return null;
+ const pc=(a,b)=>a&&b?Math.round(a/b*10000)/100:"";
+ const t=[["Ano","Receitas","Despesas","Sinistralidade %","Base de cálculo","ISS apurado","ISS estimativa","Apurado - estimativa","Estimativa / apurado %"]].concat(lin.map(x=>[x.ano,x.R,x.D,pc(x.D,x.R),x.B,x.I,x.E,x.E?x.I-x.E:"",pc(x.E,x.I)]));
+ const T=k=>smA(lin.map(x=>x[k]));t.push(["Total",T("R"),T("D"),pc(T("D"),T("R")),T("B"),T("I"),T("E"),T("E")?T("I")-T("E"):"",pc(T("E"),T("I"))]);
+ if(EC.foco==null||!lin.some(x=>x.ano===EC.foco))EC.foco=(lin.find(x=>x.ano===ST.ano)||lin[lin.length-1]).ano;
+ const x=lin.find(l=>l.ano===EC.foco),mm=[["Mês","ISS apurado","ISS estimativa","Apurado - estimativa","Estimativa / apurado %"]];
+ ms.forEach(m=>{const i=x.mI[m-1]||0,e=x.mE[m-1]||0;mm.push([MES[m],i,e,e?i-e:"",pc(e,i)]);});mm.push(["Total",x.I,x.E,x.E?x.I-x.E:"",pc(x.E,x.I)]);
+ return{t,mm,ano:x.ano};
+}
+function ecAoa(){const e=ecTabs();if(!e)return[];
+ return[["Comparativo anos",xlsSheet([["Comparativo entre anos — "+ecPer().per]].concat(e.t),[10,18,18,14,18,16,16,18,14],{intc:[0]})],["Apurado x estimat. "+e.ano,xlsSheet([["Mês a mês "+e.ano]].concat(e.mm),[14,16,16,18,14])]];
+}
+function ecBarras(it,la,lb){
+ if(!it.length)return '<p class="hint">Sem dados no filtro.</p>';
+ const W=1000,H=220,pl=78,pr=12,pt=12,pb=24,max=Math.max(...it.map(x=>Math.max(x.a||0,x.b||0)),1),Y=v=>H-pb-(Math.max(v,0)/max)*(H-pt-pb),bw=(W-pl-pr)/it.length;
+ let s='<svg viewBox="0 0 '+W+" "+H+'" xmlns="http://www.w3.org/2000/svg" role="img">';
+ for(let i=0;i<=4;i++){const v=max*i/4,y=Y(v);s+='<line x1="'+pl+'" y1="'+y+'" x2="'+(W-pr)+'" y2="'+y+'" stroke="var(--line2)"/><text x="'+(pl-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="var(--mut)">'+(max>=2e6?mi(v):fmt(Math.round(v/1000)).replace(/,00$/,'')+' mil')+"</text>";}
+ it.forEach((x,i)=>{const X=pl+i*bw,a=x.a||0,b=x.b||0;
+  s+='<g class="mg" data-k="'+x.k+'" style="cursor:pointer"><rect x="'+X+'" y="'+pt+'" width="'+bw+'" height="'+(H-pt-pb)+'" fill="transparent"/>'+
+   '<rect x="'+(X+bw*.16)+'" y="'+Y(a)+'" width="'+bw*.32+'" height="'+(H-pb-Y(a))+'" fill="var(--acc)" rx="1"><title>'+x.t+" · "+la+" "+rs(a)+"</title></rect>"+
+   '<rect x="'+(X+bw*.52)+'" y="'+Y(b)+'" width="'+bw*.32+'" height="'+(H-pb-Y(b))+'" fill="#B1D34B" rx="1"><title>'+x.t+" · "+lb+" "+rs(b)+(b&&a?" · diferença "+rs(a-b):"")+"</title></rect>"+
+   '<text x="'+(X+bw/2)+'" y="'+(H-7)+'" text-anchor="middle" font-size="11" fill="var(--mut)">'+x.t+"</text></g>";});
+ return s+'<line x1="'+pl+'" y1="'+(H-pb)+'" x2="'+(W-pr)+'" y2="'+(H-pb)+'" stroke="var(--line)"/></svg><p class="hint" style="margin:4px 0 0"><span style="color:var(--acc)">■</span> '+la+' &nbsp; <span style="color:#B1D34B">■</span> '+lb+"</p>";
 }
 function grafico(ms){
  if(!ms.length)return '<p class="hint">Carregue os arquivos para ver o gráfico.</p>';
@@ -1260,15 +1366,15 @@ function camada(m0,quieto){
  if(!quieto)$("#cam2").scrollIntoView({block:"nearest"});
 }
 function evolucao(ms){
- let h='<thead><tr><th>Mês</th><th>Receitas</th><th>Despesas</th><th>Sinistralidade</th><th>Base</th><th>ISSQN</th><th>Variação da base</th></tr></thead><tbody>';
+ let h='<thead><tr><th>Mês</th><th>Receitas</th><th>Despesas</th><th>Sinistralidade</th><th>Base</th><th>ISSQN</th><th>ISS estimativa</th><th>Apurado − estimativa</th><th>Variação da base</th></tr></thead><tbody>';
  let ant=null;
  ms.forEach(m=>{
   const r=recM(m),d=despM(m),b=r-d,vr=ant===null||!ant?null:(b-ant)/Math.abs(ant)*100;
-  h+="<tr><td>"+MES[m]+"</td><td>"+fmt(r)+"</td><td>"+fmt(d)+"</td><td>"+fmt(r?d/r*100:0)+"%</td><td>"+fmt(b)+"</td><td>"+fmt(impM(m))+"</td><td style='color:"+(vr===null?"var(--mut)":(vr<0?"var(--desp)":"var(--acc)"))+"'>"+(vr===null?"–":(vr>0?"+":"")+fmt(vr)+"%")+"</td></tr>";
+  h+="<tr><td>"+MES[m]+"</td><td>"+fmt(r)+"</td><td>"+fmt(d)+"</td><td>"+fmt(r?d/r*100:0)+"%</td><td>"+fmt(b)+"</td><td>"+fmt(impM(m))+"</td><td>"+(estM(m)?fmt(estM(m)):"–")+"</td><td>"+(estM(m)?fmt(impM(m)-estM(m)):"–")+"</td><td style='color:"+(vr===null?"var(--mut)":(vr<0?"var(--desp)":"var(--acc)"))+"'>"+(vr===null?"–":(vr>0?"+":"")+fmt(vr)+"%")+"</td></tr>";
   ant=b;
  });
  const R=somaAno(recM),D=somaAno(despM);
- h+='</tbody><tfoot><tr class="tt"><td><b>Acumulado</b></td><td><b>'+fmt(R)+"</b></td><td><b>"+fmt(D)+"</b></td><td><b>"+fmt(R?D/R*100:0)+"%</b></td><td><b>"+fmt(R-D)+"</b></td><td><b>"+fmt(somaAno(impM))+"</b></td><td></td></tr></tfoot>";
+ h+='</tbody><tfoot><tr class="tt"><td><b>Acumulado</b></td><td><b>'+fmt(R)+"</b></td><td><b>"+fmt(D)+"</b></td><td><b>"+fmt(R?D/R*100:0)+"%</b></td><td><b>"+fmt(R-D)+"</b></td><td><b>"+fmt(somaAno(impM))+"</b></td><td><b>"+fmt(somaAno(estM))+"</b></td><td><b>"+(somaAno(estM)?fmt(somaAno(impM)-somaAno(estM)):"–")+"</b></td><td></td></tr></tfoot>";
  $("#evo").innerHTML=h;
 }
 
@@ -1387,52 +1493,53 @@ function cel(k,m,v,edit){
  return c;
 }
 function detInfo(f,tb){
- const o=ST.res[f.k]||{seg:{},m:{},arqs:[]},pk=f.pai,ks=Object.keys(o.seg).sort((a,b)=>somaAno(m=>(o.seg[b][m]||0))-somaAno(m=>(o.seg[a][m]||0)));
+ const o=ST.res[f.k]||{seg:{},m:{},arqs:[]},pk=f.pai,ks=Object.keys(o.seg).sort((a,b)=>sMZ(m=>(o.seg[b][m]||0))-sMZ(m=>(o.seg[a][m]||0)));
  const sel=segSelLer(),marc=new Set(sel[f.k]||[]);
  const lin=(txt,key,on,toggle,tip)=>{const r=document.createElement("tr");r.className="inf"+(on?" som":"");const td=document.createElement("td");td.textContent=txt;
-  const ck=document.createElement("input");ck.type="checkbox";ck.className="segck";ck.checked=on;ck.title=on?"Somando em "+(ST.linhas.find(x=>x.k===pk)||{}).lb+" — clique para tirar":"Marcar para somar em "+(ST.linhas.find(x=>x.k===pk)||{}).lb;
+  const ck=document.createElement("input");ck.type="checkbox";ck.className="segck";ck.checked=on;ck.title=on?"Somando em "+(ST.linhas.find(x=>x.k===pk)||{}).lb+" — clique para tirar":"Marcar para somar em "+(ST.linhas.find(x=>x.k===pk)||{}).lb+" (vale para todos os anos)";
   ck.onclick=e=>{e.stopPropagation();if(!pode("ajuste")){e.preventDefault();alert("Seu usuário não tem permissão para alterar o que soma na apuração (módulo “Ajustes manuais e calibragem”).");return;}toggle(ck.checked);recalcular();};
   td.prepend(ck);td.title=tip;r.appendChild(td);
   const res=ST.res[key]||{m:{}};let s=0;
-  for(let m=1;m<=12;m++){const v=res.m[m]||0;s+=v;const c=document.createElement("td");c.textContent=v?fmt(v):"–";if(!v)c.className="zero";else{c.classList.add("acl");c.title="Abrir os lançamentos de "+MES[m]+" — "+txt.replace("↳ ","");c.onclick=()=>drill(key,m);}r.appendChild(c);}
+  for(const m of MZ()){const v=res.m[m]||0;s+=v;const c=document.createElement("td");c.textContent=v?fmt(v):"–";if(!v)c.className="zero";else{c.classList.add("acl");c.title="Abrir os lançamentos de "+MES[m]+" — "+txt.replace("↳ ","");c.onclick=()=>drill(key,m);}r.appendChild(c);}
   const tt=document.createElement("td");tt.textContent=s?fmt(s):"–";tt.style.fontWeight="600";r.appendChild(tt);tb.appendChild(r);};
  lin("↳ Faturado","fat:"+pk,fatOn(pk),v=>{const o2=segSelLer();o2["__fat:"+pk]=v;segSelGravar(o2);},"Valores originais de "+((ST.linhas.find(x=>x.k===pk)||{}).lb||"")+" (planilha "+((ST.res["fat:"+pk]||{}).arqs||[]).join(", ")+")");
- if(!o.arqs.length){const r=document.createElement("tr");r.className="inf";r.innerHTML='<td colspan="14" style="padding-left:44px">'+esc(f.lb)+': nenhum arquivo com “'+esc(f.arq||"")+'” no nome — as classificações aparecem quando o relatório estiver na base.</td>';tb.appendChild(r);return;}
+ if(!o.arqs.length){const r=document.createElement("tr");r.className="inf";r.innerHTML='<td colspan="'+(MZ().length+2)+'" style="padding-left:44px">'+esc(f.lb)+': nenhum arquivo com “'+esc(f.arq||"")+'” no nome — as classificações aparecem quando o relatório estiver na base.</td>';tb.appendChild(r);return;}
  ks.forEach(k=>lin("↳ "+k,"seg:"+f.k+":"+k,marc.has(k),v=>{const o2=segSelLer(),a2=new Set(o2[f.k]||[]);v?a2.add(k):a2.delete(k);o2[f.k]=[...a2];segSelGravar(o2);},"Classificação do "+f.lb+(o.arqs.length?" · "+o.arqs.join(", "):"")));
 }
 function matriz(){
  const t=$("#mtz");t.innerHTML="";
  const th=document.createElement("thead"),tr=document.createElement("tr");
- tr.innerHTML="<th>Descrição / Períodos</th>"+ABR.slice(1).map(a=>"<th>"+a+"</th>").join("")+"<th>Acumulado</th>";
+ {const bm=$("#mtzMes");bm._sa=bm._sa||{};bm._sel=(bm._sa[ST.ano]||[]).slice();mesPicker(bm,()=>{bm._sa[ST.ano]=bm._sel.slice();matriz();});}
+ tr.innerHTML="<th>Descrição / Períodos</th>"+MZ().map(m=>"<th>"+ABR[m]+"</th>").join("")+"<th>"+(MZf()?"Total dos meses":"Acumulado")+"</th>";
  th.appendChild(tr);t.appendChild(th);
  const tb=document.createElement("tbody");
- const grupo=(txt,cls,g)=>{const r=document.createElement("tr");r.className="gr";const td=document.createElement("td");td.colSpan=14;td.textContent=txt+" ▸ relatório analítico";td.style.color=cls;td.title="Abrir relatório analítico de "+txt.toLowerCase();td.onclick=()=>analitico(g);r.appendChild(td);tb.appendChild(r);};
+ const grupo=(txt,cls,g)=>{const r=document.createElement("tr");r.className="gr";const td=document.createElement("td");td.colSpan=MZ().length+2;td.textContent=txt+" ▸ relatório analítico";td.style.color=cls;td.title="Abrir relatório analítico de "+txt.toLowerCase();td.onclick=()=>analitico(g);r.appendChild(td);tb.appendChild(r);};
  const linha=(l,ind)=>{
   const r=document.createElement("tr");r.className=l.g==="R"?"r":"d";
   const td=document.createElement("td");td.innerHTML=lbH(l);r.appendChild(td);if(ind)r.classList.add("fi");
   const filhos=ST.linhas.filter(x=>x.info&&x.pai===l.k),ab=SGA["pai:"+l.k];
   if(filhos.length){td.insertAdjacentHTML("afterbegin",'<span class="pai">'+(ab?"▾ ":"▸ ")+"</span>");td.classList.add("tgl");td.title=(ab?"Recolher":"Abrir")+" a composição: marque o que deve somar nesta linha";td.onclick=e=>{if(e.target.closest(".dsc")&&e.detail===0)return;SGA["pai:"+l.k]=!SGA["pai:"+l.k];matriz();};}
-  let s=0;for(let m=1;m<=12;m++){const v=val(l.k,m);s+=v;r.appendChild(cel(l.k,m,v,true));}
+  let s=0;for(const m of MZ()){const v=val(l.k,m);s+=v;r.appendChild(cel(l.k,m,v,true));}
   const tt=document.createElement("td");tt.textContent=s?fmt(s):"–";if(!s)tt.className="zero";tt.style.fontWeight="600";r.appendChild(tt);
-  tt.classList.add("acl");tt.title="Abrir todos os lançamentos do ano desta linha";tt.onclick=()=>{analitico(l.g);AN.L=new Set([l.k]);anUI();anRender();};
+  tt.classList.add("acl");tt.title="Abrir todos os lançamentos do ano desta linha";tt.onclick=()=>{analitico(l.g,MZa());AN.L=new Set([l.k]);anUI();anRender();};
   tb.appendChild(r);
   if(filhos.length&&ab)filhos.forEach(f=>detInfo(f,tb));
  };
  const total=(txt,f,cls,g)=>{
   const r=document.createElement("tr");r.className="tot "+cls;
   const td=document.createElement("td");td.textContent=txt;r.appendChild(td);
-  for(let m=1;m<=12;m++){const td2=document.createElement("td");const v=f(m);td2.textContent=v?fmt(v):"–";if(!v)td2.className="zero";r.appendChild(td2);}
-  const tt=document.createElement("td");tt.textContent=fmt(somaAno(f));r.appendChild(tt);tb.appendChild(r);
-  if(g)[...r.children].forEach((c,i)=>{c.title="Relatório analítico"+(i>0&&i<13?" — "+MES[i]:"");c.onclick=()=>analitico(g,i>0&&i<13?i:0);});
+  for(const m of MZ()){const td2=document.createElement("td");const v=f(m);td2.textContent=v?fmt(v):"–";if(!v)td2.className="zero";r.appendChild(td2);}
+  const tt=document.createElement("td");tt.textContent=fmt(sMZ(f));r.appendChild(tt);tb.appendChild(r);
+  if(g)[...r.children].forEach((c,i)=>{const ms=MZ(),mi=i>0&&i<=ms.length?ms[i-1]:0;c.title="Relatório analítico"+(mi?" — "+MES[mi]:"");c.onclick=()=>analitico(g,mi||MZa());});
  };
  grupo("Receitas","var(--rec)","R");
  const bloco=g=>plano(g).forEach(it=>{
   if(it.tp==="l")return linha(it.l,it.ind);
   const r=document.createElement("tr");r.className="sgp "+(g==="R"?"r":"d");
   const td=document.createElement("td");td.textContent=(SGA[it.nome]?"▾ ":"▸ ")+it.nome;td.title=(SGA[it.nome]?"Recolher":"Abrir")+" a composição: "+it.ls.map(l=>l.lb).join(", ");td.onclick=()=>sgToggle(it.nome);r.appendChild(td);
-  let s=0;for(let m=1;m<=12;m++){const v=sgVal(it,m);s+=v;const c=document.createElement("td");c.textContent=v?fmt(v):"–";if(!v)c.className="zero";r.appendChild(c);}
+  let s=0;for(const m of MZ()){const v=sgVal(it,m);s+=v;const c=document.createElement("td");c.textContent=v?fmt(v):"–";if(!v)c.className="zero";r.appendChild(c);}
   const tt=document.createElement("td");tt.textContent=s?fmt(s):"–";tt.style.fontWeight="700";r.appendChild(tt);tb.appendChild(r);
-  tt.classList.add("acl");tt.title="Abrir todos os lançamentos do ano de "+it.nome;tt.onclick=()=>{analitico(g);AN.L=new Set(it.ls.map(l=>l.k));anUI();anRender();};
+  tt.classList.add("acl");tt.title="Abrir todos os lançamentos do ano de "+it.nome;tt.onclick=()=>{analitico(g,MZa());AN.L=new Set(it.ls.map(l=>l.k));anUI();anRender();};
  });
  bloco("R");
  total("Total de Receitas",recM,"tr","R");
@@ -1442,16 +1549,16 @@ function matriz(){
  total("Base de cálculo do ISSQN",baseM,"base");
  {const r=document.createElement("tr");r.className="est";const td=document.createElement("td");td.textContent="ISS pago por estimativa (comparativo)";td.title="Só para comparação — não é deduzido de nenhum valor da apuração. Clique no mês para informar o valor pago";r.appendChild(td);
   const est=estLer(),ed=true;
-  for(let m=1;m<=12;m++){const c=document.createElement("td"),man=typeof est[m]==="number",v=man?est[m]:estArqM(m);c.textContent=v?fmt(v):"–";if(!v)c.classList.add("zero");if(man&&estArqM(m))c.classList.add("eman");
-   if(ed){c.classList.add("ein");c.title=(man?"Valor digitado"+(estArqM(m)?" (a planilha traz "+fmt(estArqM(m))+"; apague para voltar a ela)":""):estArqM(m)?"Valor da planilha de estimativa":"")+" — clique para informar o ISS pago por estimativa em "+MES[m];c.onclick=()=>{if(c.querySelector("input"))return;if(!pode("ajuste")){alert("Seu usuário não tem permissão para informar o ISS pago por estimativa (módulo “Ajustes manuais e calibragem”). Peça ao administrador.");return;}const i=document.createElement("input");i.inputMode="decimal";i.value=v?fmt(v):"";c.textContent="";c.appendChild(i);i.focus();i.select();
+  {let lim=false;for(let m=1;m<=12;m++)if(typeof est[m]==="number"&&estArqM(m)){delete est[m];lim=true;}if(lim)try{localStorage.setItem(estKey(),JSON.stringify(est));}catch(e){}}
+  for(const m of MZ()){const c=document.createElement("td"),pl=estArqM(m),man=!pl&&typeof est[m]==="number",v=pl||(man?est[m]:0);c.textContent=v?fmt(v):"–";if(!v)c.classList.add("zero");if(man)c.classList.add("eman");
+   if(ed){c.classList.add("ein");c.dataset.em=m;c.title=pl?"Valor da planilha "+estSrc(m)+" — para alterar, corrija a planilha":(man?"Valor digitado":"")+" — clique para informar o ISS pago por estimativa em "+MES[m];c.onclick=()=>{if(c.querySelector("input"))return;if(pl){alert("O ISS pago por estimativa de "+MES[m]+"/"+ST.ano+" vem da planilha “"+estSrc(m)+"”. Para alterar, corrija a planilha e atualize a pasta.");return;}if(!pode("ajuste")){alert("Seu usuário não tem permissão para informar o ISS pago por estimativa (módulo “Ajustes manuais e calibragem”). Peça ao administrador.");return;}const i=document.createElement("input");i.inputMode="decimal";i.value=v?fmt(v):"";c.textContent="";c.appendChild(i);i.focus();i.select();
      let feito=false;const fim=ok=>{if(feito)return;feito=true;if(ok){const o=estLer(),t=i.value.trim();if(t==="")delete o[m];else o[m]=parseVal(t);estGravar(o);}matriz();};
-     i.onkeydown=e=>{if(e.key==="Enter")fim(true);if(e.key==="Escape")fim(false);if(e.key==="Tab"){e.preventDefault();fim(true);const nx=$("#mtz tr.est td.ein:nth-child("+(e.shiftKey?m:m+2)+")");if(nx)nx.click();}};i.onblur=()=>fim(true);};}
+     i.onkeydown=e=>{if(e.key==="Enter")fim(true);if(e.key==="Escape")fim(false);if(e.key==="Tab"){e.preventDefault();fim(true);const ms=MZ(),nm=ms[ms.indexOf(m)+(e.shiftKey?-1:1)],nx=nm&&$('#mtz tr.est td[data-em="'+nm+'"]');if(nx)nx.click();}};i.onblur=()=>fim(true);};}
    r.appendChild(c);}
-  const tt=document.createElement("td");tt.textContent=fmt(somaAno(estM));tt.style.fontWeight="600";r.appendChild(tt);tb.appendChild(r);}
+  const tt=document.createElement("td");tt.textContent=fmt(sMZ(estM));tt.style.fontWeight="600";r.appendChild(tt);tb.appendChild(r);}
  total("Imposto devido ("+fmt(ST.aliq)+"%)",impM,"imp");
- if(somaAno(estM)){const r=document.createElement("tr");r.className="dif";const td=document.createElement("td");td.textContent="Comparativo: apurado − estimativa";td.title="Só para comparação: diferença entre o imposto apurado e o ISS pago por estimativa. Não altera a apuração.";r.appendChild(td);
-  for(let m=0;m<=12;m++){const v=m?difM(m):somaAno(difM),c=document.createElement("td");c.textContent=Math.abs(v)<0.005?"–":fmt(v);c.className=Math.abs(v)<0.005?"zero":"";if(m)r.appendChild(c);else var tot=c;}
-  r.appendChild(tot);tb.appendChild(r);}
+ if(sMZ(estM)){const r=document.createElement("tr");r.className="dif";const td=document.createElement("td");td.textContent="Comparativo: apurado − estimativa";td.title="Só para comparação: diferença entre o imposto apurado e o ISS pago por estimativa. Não altera a apuração.";r.appendChild(td);
+  for(const m of [...MZ(),0]){const v=m?difM(m):sMZ(difM),c=document.createElement("td");c.textContent=Math.abs(v)<0.005?"–":fmt(v);c.className=Math.abs(v)<0.005?"zero":"";r.appendChild(c);}tb.appendChild(r);}
  t.appendChild(tb);
  t.querySelectorAll("td.ed").forEach(td=>td.onclick=()=>drill(td.dataset.k,+td.dataset.m));
 }
@@ -1799,14 +1906,14 @@ function pdfDem(d,dd){
 
 /* ---------- Apuração ---------- */
 function aoa(){
- const h=["Descrição / Períodos",...ABR.slice(1),"Acumulado"];
+ const h=["Descrição / Períodos",...MZ().map(m=>ABR[m]),MZf()?"Total dos meses":"Acumulado"];
  const o=[["Apuração do ISSQN — "+ST.ano+" — alíquota "+fmt(ST.aliq)+"%"],[],h];
- const lin=l=>{const r=[l.lb];let s=0;for(let m=1;m<=12;m++){const v=val(l.k,m);s+=v;r.push(v);}r.push(s);return r;};
- const tt=(t,f)=>{const r=[t];for(let m=1;m<=12;m++)r.push(f(m));r.push(somaAno(f));return r;};
+ const lin=l=>{const r=[l.lb];let s=0;for(const m of MZ()){const v=val(l.k,m);s+=v;r.push(v);}r.push(s);return r;};
+ const tt=(t,f)=>{const r=[t];for(const m of MZ())r.push(f(m));r.push(sMZ(f));return r;};
  const blc=g=>plano(g,true).forEach(it=>{if(it.tp==="sg"){o.push(tt(it.nome,m=>sgVal(it,m)));return;}const r=lin(it.l);if(it.ind)r[0]="    "+r[0];o.push(r);});
  o.push(["RECEITAS"]);blc("R");o.push(tt("Total de Receitas",recM));
  o.push(["DESPESAS"]);blc("D");o.push(tt("Total de despesas",despM));
- o.push(tt("Base de cálculo do ISSQN",baseM));o.push(tt("ISS pago por estimativa (comparativo)",estM));o.push(tt("Imposto devido",impM));if(somaAno(estM))o.push(tt("Comparativo: apurado - estimativa",difM));
+ o.push(tt("Base de cálculo do ISSQN",baseM));o.push(tt("ISS pago por estimativa (comparativo)",estM));o.push(tt("Imposto devido",impM));if(sMZ(estM))o.push(tt("Comparativo: apurado - estimativa",difM));
  return o;
 }
 function demAoa(dd){
@@ -1826,14 +1933,14 @@ function xlsApur(){
 }
 function pdfApur(){
  const d=pdfNovo("Apuração do ISSQN — Resumo mês a mês","Exercício "+ST.ano+" · alíquota "+fmt(ST.aliq)+"%"+(ST.fano?" · somente lançamentos do ano-base":""),true);if(!d)return;
- const b=[],lin=l=>{const r=[l.lb];let s=0;for(let m=1;m<=12;m++){const v=val(l.k,m);s+=v;r.push(v||"–");}r.push(s);return r;};
- const tt=(t,f,s)=>{const r=[t];for(let m=1;m<=12;m++)r.push(f(m)||"–");r.push(somaAno(f));return{_s:s,c:r};};
+ const b=[],lin=l=>{const r=[l.lb];let s=0;for(const m of MZ()){const v=val(l.k,m);s+=v;r.push(v||"–");}r.push(s);return r;};
+ const tt=(t,f,s)=>{const r=[t];for(const m of MZ())r.push(f(m)||"–");r.push(sMZ(f));return{_s:s,c:r};};
  const blc=g=>plano(g,true).forEach(it=>{if(it.tp==="sg"){const r=tt(it.nome,m=>sgVal(it,m),"sgp");b.push(r);return;}const r=lin(it.l);if(it.ind)r[0]={content:r[0],styles:{cellPadding:{left:5,top:1.1,bottom:1.1,right:1.1}}};b.push(r);});
- b.push({_s:"gr",c:[{content:"RECEITAS",colSpan:14}]});blc("R");b.push(tt("Total de receitas",recM,"st"));
- b.push({_s:"gr",c:[{content:"DESPESAS",colSpan:14}]});blc("D");b.push(tt("Total de despesas",despM,"st"));
- b.push(tt("Base de cálculo do ISSQN",baseM,"bs"));b.push(tt("ISS pago por estimativa (comparativo)",estM,""));b.push(tt("Imposto devido ("+fmt(ST.aliq)+"%)",impM,"im"));if(somaAno(estM))b.push(tt("Comparativo: apurado - estimativa",difM,""));
+ b.push({_s:"gr",c:[{content:"RECEITAS",colSpan:MZ().length+2}]});blc("R");b.push(tt("Total de receitas",recM,"st"));
+ b.push({_s:"gr",c:[{content:"DESPESAS",colSpan:MZ().length+2}]});blc("D");b.push(tt("Total de despesas",despM,"st"));
+ b.push(tt("Base de cálculo do ISSQN",baseM,"bs"));b.push(tt("ISS pago por estimativa (comparativo)",estM,""));b.push(tt("Imposto devido ("+fmt(ST.aliq)+"%)",impM,"im"));if(sMZ(estM))b.push(tt("Comparativo: apurado - estimativa",difM,""));
  pdfH(d,"Resumo mês a mês");
- pdfTab(d,["Descrição / Períodos",...ABR.slice(1),"Acumulado"],b,{fs:6.3,numCols:[1,2,3,4,5,6,7,8,9,10,11,12,13],cs:{0:{cellWidth:48}}});
+ pdfTab(d,["Descrição / Períodos",...MZ().map(m=>ABR[m]),MZf()?"Total dos meses":"Acumulado"],b,{fs:6.3,numCols:MZ().map((x,i)=>i+1).concat(MZ().length+1),cs:{0:{cellWidth:48}}});
  const dd=docDados(pegaM($("#mes")));
  pdfH(d,"Demonstrativo — "+dd.per);pdfDem(d,dd);
  const neg=[];for(let x=1;x<=12;x++)if((recM(x)||despM(x))&&baseM(x)<0)neg.push(MES[x]);
@@ -1858,7 +1965,7 @@ function anosNaBase(){
  const ys=new Set();
  for(const l of ST.linhas){if(l.info||!l.arq||!l.cm)continue;
   for(const a of ST.arqs.filter(x=>x.forcada?x.forcada===l.k:(!x.forcada&&casa(x,l.arq)))){const cm=resolveCol(a,l.cm);if(cm<0)continue;const Y=pmCol(a,cm).y;for(let i=0;i<Y.length;i++)if(Y[i])ys.add(Y[i]);}}
- Object.keys(ST.estArq||{}).forEach(y=>ys.add(+y));
+ Object.keys(ST.estArq||{}).forEach(y=>{if(+y)ys.add(+y);});
  return [...ys].filter(y=>y>1990&&y<2100).sort((a,b)=>a-b);
 }
 function histAnos(){
@@ -1923,7 +2030,7 @@ function xlsEst(){
  xlsSalvar("estatisticas-issqn-"+ST.ano+".xlsx",[
   ["Indicadores",xlsSheet(timbreAoa("Estatísticas do exercício "+ST.ano).concat([["Indicador","Valor (R$)","Observação"]],e.ind),[32,20,36])],
   ["Evolução mensal",xlsSheet(ev,[14,18,18,16,18,16,18])],
-  ["Composição do mês",xlsSheet(cp,[12,40,18,12])]]);
+  ["Composição do mês",xlsSheet(cp,[12,40,18,12])]].concat(ecAoa()));
 }
 function pdfEst(){
  const e=estDados(),d=pdfNovo("Estatísticas da Apuração do ISSQN","Exercício "+ST.ano+" · alíquota "+fmt(ST.aliq)+"%");if(!d)return;
@@ -1933,6 +2040,11 @@ function pdfEst(){
  b.push({_s:"st",c:["Acumulado",e.R,e.D,fmt(e.R?e.D/e.R*100:0)+"%",e.R-e.D,e.I,""]});
  pdfTab(d,["Mês","Receitas","Despesas","Sinistralidade","Base","ISSQN","Var. base"],b,{fs:7.2,numCols:[1,2,3,4,5,6]});
  if(e.m){pdfH(d,"Composição — "+mTxt(e.m,ST.ano).replace(" / ","/"));pdfTab(d,["Grupo","Linha","Valor (R$)","% do grupo"],e.cmp.map(r=>[r[0],r[1],r[2],fmt(r[3])+"%"]),{numCols:[2,3]});}
+ const e2=ecTabs();if(e2){const P=v=>v===""?"–":v,pp=v=>v===""?"–":fmt(v)+"%";
+  pdfH(d,"Comparativo entre anos — apurado × estimativa ("+ecPer().per+")");
+  pdfTab(d,["Ano","Receitas","Despesas","Sinistr.","Base","ISS apurado","ISS estimativa","Apurado − estim.","Estim. ÷ apurado"],e2.t.slice(1).map((r,i,A)=>{const c=[String(r[0]),r[1],r[2],pp(r[3]),r[4],r[5],r[6]||"–",P(r[7]),pp(r[8])];return i===A.length-1?{_s:"st",c}:c;}),{fs:6.8,numCols:[1,2,3,4,5,6,7,8]});
+  pdfH(d,"Mês a mês "+e2.ano+" — apurado × estimativa");
+  pdfTab(d,["Mês","ISS apurado","ISS estimativa","Apurado − estimativa","Estimativa ÷ apurado"],e2.mm.slice(1).map((r,i,A)=>{const c=[r[0],r[1]||"–",r[2]||"–",P(r[3]),pp(r[4])];return i===A.length-1?{_s:"st",c}:c;}),{numCols:[1,2,3,4]});}
  pdfSalvar(d,"estatisticas-issqn-"+ST.ano+".pdf");
 }
 
