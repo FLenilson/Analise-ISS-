@@ -10,10 +10,10 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <style>
-:root{--bg:#e9edeb;--pan:#fff;--pan2:#f4f6f5;--ink:#131a18;--mut:#5d6b66;--line:#c6cfcb;--line2:#e1e7e4;--rec:#0e5aa7;--desp:#b02020;--acc:#00995d;--acc2:#0a5f55;--acc3:#b1d34b;--hlbg:#ffe86b;--hlink:#2a2300;--warn:#8a5b00;--edit:#7a4fd8}
+:root{--bg:#eef3f1;--pan:#ffffff;--pan2:#f3f7f5;--ink:#14231e;--mut:#5b6b66;--line:#c9d6d1;--line2:#e2eae7;--rec:#007f4e;--desp:#c25400;--base:#0a5f55;--est:#5b2a86;--pv:#c0124a;--nv:#007f4e;--acc:#00995d;--acc2:#0a5f55;--acc3:#b1d34b;--hlbg:#ffcb08;--hlink:#2a2000;--warn:#a65e00;--edit:#5b2a86;--recbg:#e6f4ec;--despbg:#fdf0e6;--estbg:#f1ebf7} /* paleta Unimed: verde (receita), laranja (despesa), verde-escuro (base), amarelo (ISS), roxo (estimativa), rosa (a pagar) */
 :root:not([data-theme="light"]){color-scheme:light dark}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1412;--pan:#151c1a;--pan2:#1b2321;--ink:#e6ece9;--mut:#8ea09a;--line:#2c3733;--line2:#232c29;--rec:#6fb2ef;--desp:#f08a8a;--acc:#2fbf85;--acc2:#6fd6a8;--acc3:#b1d34b;--hlbg:#4a4000;--hlink:#ffe86b;--warn:#d4a24a;--edit:#b79bff}}
-:root[data-theme="dark"]{--bg:#0e1412;--pan:#151c1a;--pan2:#1b2321;--ink:#e6ece9;--mut:#8ea09a;--line:#2c3733;--line2:#232c29;--rec:#6fb2ef;--desp:#f08a8a;--acc:#2fbf85;--acc2:#6fd6a8;--acc3:#b1d34b;--hlbg:#4a4000;--hlink:#ffe86b;--warn:#d4a24a;--edit:#b79bff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1311;--pan:#131c19;--pan2:#18231f;--ink:#e8efec;--mut:#93a59f;--line:#2a3833;--line2:#202b27;--rec:#3fd18f;--desp:#ff9a4a;--base:#7fdcc8;--est:#c4a6ee;--pv:#ff6b8d;--nv:#3fd18f;--acc:#22b874;--acc2:#7fdcc8;--acc3:#b1d34b;--hlbg:#4d4000;--hlink:#ffdc4a;--warn:#e0a84d;--edit:#c4a6ee;--recbg:#12291f;--despbg:#2e1f12;--estbg:#231a30}}
+:root[data-theme="dark"]{--bg:#0c1311;--pan:#131c19;--pan2:#18231f;--ink:#e8efec;--mut:#93a59f;--line:#2a3833;--line2:#202b27;--rec:#3fd18f;--desp:#ff9a4a;--base:#7fdcc8;--est:#c4a6ee;--pv:#ff6b8d;--nv:#3fd18f;--acc:#22b874;--acc2:#7fdcc8;--acc3:#b1d34b;--hlbg:#4d4000;--hlink:#ffdc4a;--warn:#e0a84d;--edit:#c4a6ee;--recbg:#12291f;--despbg:#2e1f12;--estbg:#231a30}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);font:400 13px/1.35 "IBM Plex Sans",-apple-system,Segoe UI,Roboto,sans-serif;font-variant-numeric:tabular-nums}
@@ -83,11 +83,11 @@ table{border-collapse:collapse;width:100%}
 #mtz tr.tot td{font-weight:600;border-top:1.5px solid var(--line)}
 #mtz tr.tr td{color:var(--rec)}
 #mtz tr.td_ td{color:var(--desp)}
-#mtz tr.base td{font-weight:600;background:var(--pan2)}
+#mtz tr.base td{font-weight:700;background:var(--pan2);color:var(--base)}
 #mtz tr.base td:first-child{background:var(--pan2)}
-#mtz tr.est td{background:var(--pan2);color:var(--rec)}#mtz tr.est td:first-child{background:var(--pan2)}
+#mtz tr.est td{background:var(--estbg);color:var(--est)}#mtz tr.est td:first-child{background:var(--estbg)!important}#mtz tr.est td:first-child{background:var(--pan2)}
 #mtz tr.est td.ein{cursor:text}#mtz tr.est td.eman{text-decoration:underline dotted}#mtz tr.est td.ein:hover{box-shadow:inset 0 0 0 1px var(--acc)}#mtz tr.est td input{width:100%;text-align:right;padding:1px 3px;border-color:var(--acc)}
-#mtz tr.dif td{color:var(--mut);font-style:italic;background:var(--pan2)}#mtz tr.dif td:first-child{background:var(--pan2)}#mtz tr.est td:first-child{font-style:italic}
+#mtz tr.dif td{color:var(--mut);font-style:italic;background:var(--pan2)}#mtz tr.dif td.pv{color:var(--pv);font-style:normal;font-weight:600}#mtz tr.dif td.nv{color:var(--nv);font-style:normal;font-weight:600}#mtz tr.dif td:first-child{background:var(--pan2)}#mtz tr.est td:first-child{font-style:italic}
 #mtz tr td.acl{cursor:pointer}#mtz tr td.acl:hover{box-shadow:inset 0 0 0 1px var(--acc)}
 #mtz tr.imp td{background:var(--hlbg);color:var(--hlink);font-weight:700}
 #mtz tr.imp td:first-child{background:var(--hlbg);color:var(--hlink)}
@@ -123,12 +123,27 @@ table{border-collapse:collapse;width:100%}
 .tabs{display:flex;gap:4px;margin-bottom:8px}
 .tabs button{border-radius:4px 4px 0 0;padding:5px 14px;font-weight:500}
 .tabs button.on{background:var(--acc2);border-color:var(--acc2);color:#fff}
-.ecF{display:flex;gap:8px;align-items:center;margin-bottom:5px}.ecF .lb{min-width:44px;font-size:11px;color:var(--mut)}.ecF .chips button{padding:1px 8px;font-size:11.5px}#ecTab tr.foco td{background:color-mix(in srgb,var(--acc) 12%,transparent)}#ecTab tbody tr:not(.cons){cursor:pointer}td.pos{color:var(--desp)}td.neg{color:var(--acc)}
+.ecF{display:flex;gap:8px;align-items:center;margin-bottom:5px}.ecF .lb{min-width:44px;font-size:11px;color:var(--mut)}.ecF .chips button{padding:1px 8px;font-size:11.5px}.ecF .chips button:disabled{opacity:.35;cursor:default}.ecF .rmA{font-size:11.5px;padding:1px 4px;margin-right:4px}#ecTab tr.foco td{background:color-mix(in srgb,var(--acc) 12%,transparent)}#ecTab tbody tr:not(.cons){cursor:pointer}td.pos{color:var(--pv);font-weight:600}td.neg{color:var(--nv);font-weight:600}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:7px}
 .card{border:1px solid var(--line2);border-radius:4px;padding:6px 8px;background:var(--pan2)}
 .card b{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em}
 .card span{color:var(--mut);font-size:11px}
-.card.r b{color:var(--rec)}.card.d b{color:var(--desp)}.card.i b{color:var(--acc)}
+.ecHl{font-size:13.5px;line-height:1.5;margin:8px 0 0;max-width:1100px}.ecHl:empty{display:none}
+#story{padding:8px 10px 10px;border-top:1px solid var(--line2)}#story:empty,#storyK:empty{display:none}
+#storyK{padding:8px 10px 10px;border-bottom:1px solid var(--line2)}
+#story .hl{font-size:13.5px;line-height:1.5;margin:0;max-width:1100px}#story .hl b{font-weight:700}
+#storyK .flx{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px}
+#storyK .k{flex:1 1 130px;min-width:120px;border-radius:6px;padding:7px 10px;background:var(--pan2);border-left:4px solid var(--line)}
+#storyK .k span{display:block;font-size:11px;color:var(--mut)}#storyK .k b{display:block;font-size:16px;margin-top:2px;white-space:nowrap}#storyK .k i{display:block;font-style:normal;font-size:11px;color:var(--mut);margin-top:1px}
+#storyK .op{align-self:center;font-size:18px;font-weight:700;color:var(--mut);padding:0 1px}
+#storyK .k.r{border-color:var(--rec);background:var(--recbg)}#storyK .k.r b{color:var(--rec)}
+#storyK .k.d{border-color:var(--desp);background:var(--despbg)}#storyK .k.d b{color:var(--desp)}
+#storyK .k.b{border-color:var(--base)}#storyK .k.b b{color:var(--base)}
+#storyK .k.i{border-color:#e0b000;background:var(--hlbg)}#storyK .k.i b,#storyK .k.i span,#storyK .k.i i{color:var(--hlink)}
+#storyK .k.e{border-color:var(--est);background:var(--estbg)}#storyK .k.e b{color:var(--est)}
+#storyK .k.p{border-color:var(--pv)}#storyK .k.p b{color:var(--pv)}#storyK .k.n{border-color:var(--nv)}#storyK .k.n b{color:var(--nv)}
+#storyK .sep{width:1px;background:var(--line);margin:0 6px}
+.card.r b{color:var(--rec)}.card.d b{color:var(--desp)}.card.i b{color:var(--acc)}.card.e b{color:var(--est)}.card.p b{color:var(--pv)}.card.n b{color:var(--nv)}.card.b b{color:var(--base)}
 .chips{display:flex;flex-wrap:wrap;gap:4px}
 .chips button.on{background:var(--acc);border-color:var(--acc);color:#fff}
 #graf svg{width:100%;height:auto;display:block}
@@ -267,10 +282,17 @@ body.recolhido main{grid-template-columns:minmax(0,1fr)}
 .a4 tr.bs td{font-weight:700}
 .a4 tr.im td{font-weight:700;font-size:12.5px!important}
 .a4 #docDem td{font-size:12px;padding:7px 4px}
-.a4 .nt{padding:6px 0;min-height:60px;white-space:pre-wrap;line-height:1.55}
-.a4 .ass{margin-top:auto;padding-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:30px;text-align:center;font-size:11px}
+.a4 .nt{padding:6px 0;min-height:60px;line-height:1.55;overflow-wrap:anywhere}
+.a4 .nt p,.a4 .nt div{margin:0 0 4px}.a4 .nt h3{font-size:13px;margin:8px 0 4px}.a4 .nt h4{font-size:12px;margin:6px 0 3px}.a4 .nt blockquote{margin:4px 0 4px 18px;padding-left:8px;border-left:2px solid #999}
+.a4 .nt ul,.a4 .nt ol{margin:2px 0 4px;padding-left:22px}.a4 .nt table{border-collapse:collapse;margin:4px 0 6px;max-width:100%}.a4 .nt td,.a4 .nt th{border:1px solid #888;padding:2px 5px;vertical-align:top;min-width:30px}.a4 .nt hr{border:0;border-top:1px solid #000;margin:6px 0}
+.wtb{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:2px;align-items:center;max-width:210mm;margin:0 auto 8px;padding:4px 6px;background:var(--pan);border:1px solid var(--line);border-radius:6px}
+.wtb button{min-width:26px;height:26px;padding:0 6px;font-size:12px;border-radius:4px}.wtb select{height:26px;font-size:12px;padding:0 3px}.wtb i{width:1px;height:18px;background:var(--line);margin:0 4px}
+.a4 .nt [data-v]{background:color-mix(in srgb,#00995D 12%,transparent);border-radius:2px;padding:0 1px}@media print{.a4 .nt [data-v]{background:none}}
+.wtb .wcor{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;font-weight:700;font-size:13px;border-radius:4px;cursor:pointer;border-bottom:3px solid #c00000}.wtb .wrc{border-bottom-color:#ff0;font-weight:400}.wtb .wcor input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.a4 .ld{margin:auto 0 0;padding-top:26px;text-align:right;font-size:11.5px}
+.a4 .ass{padding-top:46px;display:grid;grid-template-columns:1fr 1fr;gap:30px;text-align:center;font-size:11px}
 .a4 .ass>div{border-top:1px solid #000;padding-top:4px}
-.a4 .ass b{display:block}
+.a4 .ass>div{white-space:pre-line;line-height:1.45;outline:none}.a4 .ass>div::first-line{font-weight:700}
 .a4 .ft{margin-top:18px;padding-top:4px;font-size:9px;color:#333;display:flex;justify-content:space-between}
 /* relatório analítico */
 #an{width:100vw;height:100vh;max-width:none;max-height:none;margin:0;border:0;border-radius:0;inset:0}
@@ -308,7 +330,13 @@ body.recolhido main{grid-template-columns:minmax(0,1fr)}
 #anS th,#anT th{z-index:2}
 
 @page{size:A4;margin:10mm}
-@media print{header,.col-l,.rowbar button,#drop,.tabs,dialog{display:none!important}main{display:block;padding:0;max-width:none}.pan{border:0}#wmtz{max-height:none;overflow:visible}#mtz thead th{position:static}
+@page{size:A4;margin:10mm}@page paisagem{size:A4 landscape;margin:8mm}
+@media print{:root,:root[data-theme="dark"],:root:not([data-theme="light"]){--bg:#eef3f1;--pan:#ffffff;--pan2:#f3f7f5;--ink:#14231e;--mut:#5b6b66;--line:#c9d6d1;--line2:#e2eae7;--rec:#007f4e;--desp:#c25400;--base:#0a5f55;--est:#5b2a86;--pv:#c0124a;--nv:#007f4e;--acc:#00995d;--acc2:#0a5f55;--acc3:#b1d34b;--hlbg:#ffcb08;--hlink:#2a2000;--warn:#a65e00;--edit:#5b2a86;--recbg:#e6f4ec;--despbg:#fdf0e6;--estbg:#f1ebf7;color-scheme:light}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #tab-apur::before,#tab-anos::before,#tab-est::before{content:"Unimed Vale do Sepotuba — Apuração do ISSQN";display:block;font-weight:700;font-size:14px;color:#0a5f55;border-bottom:2px solid #00995d;padding-bottom:4px;margin-bottom:8px}
+ #tab-apur,#tab-anos,#tab-est{page:paisagem}.xp{display:none!important}.scr{max-height:none!important;overflow:visible!important}
+ #mtz{font-size:8.6px;width:100%}#mtz td,#mtz th{padding:2px 4px;position:static!important}#storyK .k b{font-size:13px}#storyK .k{min-width:0;padding:5px 7px}#story .hl{font-size:11.5px}
+ .wtb,header,.col-l,.rowbar button,#drop,.tabs,dialog{display:none!important}main{display:block;padding:0;max-width:none}.pan{border:0}#wmtz{max-height:none;overflow:visible}#mtz thead th{position:static}
  body{background:#fff}.a4{box-shadow:none;padding:0;min-height:calc(297mm - 20mm);max-width:none}[contenteditable]:empty:before{content:""}[contenteditable]:hover,[contenteditable]:focus{box-shadow:none}}
 @media (prefers-reduced-motion:no-preference){#drop{transition:border-color .15s,color .15s}}
 </style>
@@ -358,38 +386,41 @@ body.recolhido main{grid-template-columns:minmax(0,1fr)}
   </section>
 </div>
 <div>
-  <nav class="tabs"><button id="bRec" title="Recolher/expandir o painel de importação de arquivos">◂ Arquivos</button><button data-tab="apur" class="on">Apuração</button><button data-tab="anos">Estimativa - ISS</button><button data-tab="est">Estatísticas</button><button data-tab="cont">Módulo Contábil</button><span class="sp"></span>
-   <span class="xp"><button id="contMes" class="mpk" hidden title="Competências do documento — marque um ou mais meses"></button><button id="bLogo" hidden title="Inserir a logomarca no timbre (duplo clique na logomarca do documento remove)">Inserir logomarca</button><input id="iLogo" type="file" accept="image/png,image/jpeg" hidden><button id="bPrn" hidden>Imprimir</button><button id="bXl" title="Exportar este módulo para Excel">Exportar Excel</button><button id="bPdf" class="pri" title="Gerar PDF deste módulo no padrão Unimed Vale do Sepotuba">Gerar PDF</button></span></nav>
+  <nav class="tabs"><button id="bRec" title="Recolher/expandir o painel de importação de arquivos">◂ Arquivos</button><button data-tab="apur" class="on">Apuração</button><button data-tab="anos">Análise Acumulada</button><button data-tab="est">Estatísticas</button><button data-tab="cont">Módulo Contábil</button><span class="sp"></span>
+   <span class="xp"><button id="contMes" class="mpk" hidden title="Competências do documento — marque um ou mais meses"></button><button id="bLogo" hidden title="Inserir a logomarca no timbre (duplo clique na logomarca do documento remove)">Inserir logomarca</button><input id="iLogo" type="file" accept="image/png,image/jpeg" hidden><button id="bPrn" hidden>Imprimir</button><button id="bImp" title="Imprimir este módulo como está na tela">Imprimir</button><button id="bXl" title="Exportar este módulo para Excel">Exportar Excel</button><button id="bPdf" class="pri" title="Gerar PDF deste módulo no padrão Unimed Vale do Sepotuba">Gerar PDF</button></span></nav>
   <div class="pan empty" id="semAc" hidden><b>Nenhum módulo liberado para o seu usuário</b>Peça ao administrador para liberar o acesso.</div>
   <div id="tab-apur">
   <section class="pan">
     <div class="rowbar"><h2 style="font-size:12px;padding:0;border:0">Resumo mês a mês</h2><button id="mtzMes" class="mpk" title="Escolha os meses que aparecem na tabela — o total passa a somar só esses meses"></button><span class="hint" id="sts"></span><span class="sp"></span><button id="bov" hidden>Limpar ajustes manuais</button></div>
+    <div id="storyK"></div>
     <div id="alerta"></div>
     <div class="scr" id="wmtz"><table id="mtz"></table></div>
+    <div id="story"></div>
     <div class="empty" id="vazio"><b>Nenhuma planilha carregada</b><span id="vzTx">O sistema identifica cada arquivo pelo nome, soma as colunas indicadas por mês e monta a base de cálculo.</span><div id="vzBt" style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"></div><p class="hint" id="vzAv" style="margin:10px auto 0;max-width:620px"></p></div>
   </section>
-  <section class="pan det">
+  <section class="pan det" hidden style="display:none">
     <div class="rowbar"><h2 style="font-size:12px;padding:0;border:0">Demonstrativo</h2><button id="mes" class="mpk" title="Marque um ou mais meses"></button><span class="sp"></span><button onclick="window.print()">Imprimir</button></div>
     <div id="dneg"></div><div class="bd"><table id="dtb"></table></div>
   </section>
   </div>
   <div id="tab-anos" hidden>
-   <section class="pan"><h2>Resumo por ano <span class="n" id="anosInfo"></span></h2><div class="scr"><table class="anT" id="anosRes"></table></div></section>
-   <section class="pan" style="margin-top:10px"><h2>Mês a mês por ano e consolidado <span class="n">clique no indicador</span></h2>
+   <section class="pan"><h2>Filtros</h2><div class="bd"><div class="ecF"><span class="lb">Anos</span><div class="chips" id="anosAnos"></div></div><div class="ecF" id="anosMsL" style="margin:0" hidden><span class="lb">Meses</span><div class="chips" id="anosMs"></div></div></div></section>
+   <section class="pan" style="margin-top:10px"><h2>Resumo por ano <span class="n" id="anosInfo"></span></h2><div class="scr"><table class="anT" id="anosRes"></table></div></section>
+   <section class="pan" style="margin-top:10px"><h2>Mês a mês por ano e acumulado <span class="n">clique no indicador</span></h2>
     <div class="bd" style="padding-bottom:0"><div class="chips" id="anosInd"></div></div>
     <div class="scr"><table class="anT" id="anosMes"></table></div></section>
   </div>
   <div id="tab-est" hidden>
-   <section class="pan"><h2>Comparativo entre anos — ISS apurado × estimativa <span class="n" id="ecInfo"></span></h2>
+   <section class="pan"><h2>Comparativo entre anos — ISS apurado × ISS-Estimativa <span class="n" id="ecInfo"></span></h2>
     <div class="bd">
      <div class="ecF"><span class="lb">Anos</span><div class="chips" id="ecAnos"></div></div>
-     <div class="ecF"><span class="lb">Meses</span><div class="chips" id="ecMes"></div></div>
-     <div class="cards" id="ecCards" style="margin-top:8px"></div>
+     <div class="ecF" id="ecMesL" hidden><span class="lb">Meses</span><div class="chips" id="ecMes"></div></div>
+     <p id="ecHl" class="ecHl"></p><div class="cards" id="ecCards" style="margin-top:8px"></div>
      <div id="ecGraf" style="margin-top:8px"></div>
     </div>
     <div class="scr"><table class="anT" id="ecTab"></table></div>
    </section>
-   <section class="pan" style="margin-top:10px"><h2>Mês a mês — apurado × estimativa <span class="n" id="ecFocoT"></span></h2>
+   <section class="pan" style="margin-top:10px"><h2>Mês a mês — apurado × ISS-Estimativa <span class="n" id="ecFocoT"></span></h2>
     <div class="bd" style="padding-bottom:0"><div class="chips" id="ecFoco"></div><div id="ecGrafM" style="margin-top:8px"></div></div>
     <div class="scr"><table class="anT" id="ecMesT"></table></div>
    </section>
@@ -405,21 +436,32 @@ body.recolhido main{grid-template-columns:minmax(0,1fr)}
    <section class="pan" style="margin-top:10px"><h2>Evolução mensal</h2><div class="scr"><table id="evo"></table></div></section>
   </div>
   <div id="tab-cont" hidden>
+   <div class="wtb" id="wtb" title="Formatação das notas explicativas">
+    <button data-c="undo" title="Desfazer (Ctrl+Z)">↶</button><button data-c="redo" title="Refazer (Ctrl+Y)">↷</button><i></i>
+    <button data-x="colar" title="Colar mantendo a formatação (Ctrl+V) — aceita texto do Word e tabelas do Excel">Colar</button><button data-x="colarT" title="Colar só o texto, sem formatação (Ctrl+Shift+V)">Colar texto</button><i></i>
+    <select id="wFont" title="Fonte"><option value="">Fonte</option><option value="doc">Padrão do documento</option><option>Arial</option><option>Calibri</option><option>Times New Roman</option><option>Courier New</option></select>
+    <select id="wTam" title="Tamanho da fonte"><option value="">Tam.</option><option value="doc">Padrão</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>14</option><option>16</option><option>18</option><option>20</option><option>24</option></select><i></i>
+    <button data-c="bold" title="Negrito (Ctrl+B)"><b>N</b></button><button data-c="italic" title="Itálico (Ctrl+I)"><em>I</em></button><button data-c="underline" title="Sublinhado (Ctrl+U)"><u>S</u></button><button data-c="strikeThrough" title="Tachado"><s>abc</s></button><button data-c="superscript" title="Sobrescrito">x²</button><button data-c="subscript" title="Subscrito">x₂</button>
+    <label class="wcor" title="Cor da fonte">A<input type="color" id="wCor" value="#c00000"></label><label class="wcor wrc" title="Realce">ab<input type="color" id="wRea" value="#ffff00"></label><i></i>
+    <select id="wEst" title="Estilo"><option value="">Estilo</option><option value="P">Normal</option><option value="H3">Título</option><option value="H4">Subtítulo</option><option value="BLOCKQUOTE">Citação</option></select>
+    <button data-c="justifyLeft" title="Alinhar à esquerda">⯇≡</button><button data-c="justifyCenter" title="Centralizar">≡</button><button data-c="justifyRight" title="Alinhar à direita">≡⯈</button><button data-c="justifyFull" title="Justificar">☰</button><i></i>
+    <button data-c="insertUnorderedList" title="Marcadores">• ≡</button><button data-c="insertOrderedList" title="Numeração">1. ≡</button><button data-c="outdent" title="Diminuir recuo">⇤</button><button data-c="indent" title="Aumentar recuo">⇥</button><i></i>
+    <select id="wVar" title="Inserir um valor que se atualiza sozinho conforme a apuração e a competência"><option value="">Inserir valor automático</option><option value="per">Período / competência</option><option value="R">Total de receitas</option><option value="D">Total de despesas</option><option value="B">Base de cálculo</option><option value="I">ISS apurado</option><option value="A">Alíquota</option><option value="E">ISS-Estimativa</option><option value="P">Valor a provisionar</option><option value="ano">Ano-base</option></select><i></i>
+    <button data-x="tab" title="Inserir tabela">Tabela</button><button data-c="insertHorizontalRule" title="Linha horizontal">―</button><button data-c="removeFormat" title="Limpar formatação">Limpar formatação</button>
+   </div>
    <article class="a4" id="doc">
     <div class="lh">
      <div class="lg" id="docLogo"></div>
-     <div class="ti"><div contenteditable="true" data-tb="t1" data-ph="Razão social"></div><div contenteditable="true" data-tb="t2" data-ph="CNPJ / inscrição municipal"></div><div contenteditable="true" data-tb="t3" data-ph="Endereço · cidade/UF · telefone"></div></div>
     </div>
     <h1>RELATÓRIO DE APURAÇÃO DO ISSQN</h1>
     <div class="ref" id="docRef"></div>
     <h3>1. Apuração do ISSQN</h3>
     <table id="docDem"></table>
     <h3 id="docNtH">2. Notas explicativas</h3>
+    <div class="nt" contenteditable="true" id="contFixo" title="Texto padrão — o mesmo em todos os meses e no consolidado; os valores em destaque se atualizam sozinhos"></div>
     <div class="nt" contenteditable="true" id="contNotas" data-ph="Observações, ressalvas, ajustes manuais aplicados, critérios adotados etc."></div>
-    <div class="ass">
-     <div><b contenteditable="true" id="contResp" data-ph="Nome do responsável"></b><span contenteditable="true" id="contCargo" data-ph="Cargo / função"></span></div>
-     <div><b contenteditable="true" id="contLocal" data-ph="Local"></b><span id="contData"></span></div>
-    </div>
+    <p class="ld" id="contLD"></p>
+    <div class="ass"><div id="contAs1" contenteditable="true" title="Clique para editar — 1ª linha é o nome (negrito). Apague tudo para voltar ao padrão."></div><div id="contAs2" contenteditable="true" title="Clique para editar — 1ª linha é o nome (negrito). Apague tudo para voltar ao padrão."></div></div>
     <div class="ft"><span id="docFt1"></span><span id="docFt2"></span></div>
    </article>
   </div>
@@ -466,7 +508,7 @@ body.recolhido main{grid-template-columns:minmax(0,1fr)}
  </div>
 </dialog>
 <dialog id="conf">
- <div class="dh"><b>Conferência da base — o que cada arquivo trouxe</b><label class="hint"><input type="checkbox" id="confSo"> só arquivos com algo fora</label><button id="confXl">Exportar Excel</button><button id="confX">Fechar</button></div>
+ <div class="dh"><b>Conferência da base — o que cada arquivo trouxe</b><label class="hint"><input type="checkbox" id="confSo"> só arquivos com algo fora</label><button id="confMapa" title="Lista de onde sai cada linha: arquivo, coluna da competência, do valor e do filtro, com o nome do cabeçalho">Mapa de colunas</button><button id="confXl">Exportar Excel</button><button id="confX">Fechar</button></div>
  <div class="db" id="confD"></div>
 </dialog>
 <dialog id="insp">
@@ -481,21 +523,21 @@ const MES=["","Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Ago
 const ABR=["","Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 const NOMES=[["JAN",1],["FEV",2],["MAR",3],["ABR",4],["MAI",5],["JUN",6],["JUL",7],["AGO",8],["SET",9],["OUT",10],["NOV",11],["DEZ",12]];
 const PADRAO=[
- {k:"contra",lb:"Contraprestações + Coparticipações",g:"R",arq:"RECEITA POR COMPETENCIA",cm:"A",cv:"E",cf:"TIPOFATURAMENTO",fv:"LOCAL"},
- {k:"interR",lb:"Intercâmbio",ds:"Unimeds",g:"R",arq:"RECEITA POR COMPETENCIA",cm:"A",cv:"E",cf:"TIPOFATURAMENTO",fv:"INTERCAMBIO"},
- {k:"event",lb:"Rede prestadora",g:"D",sg:"Eventos conhecidos e avisados",arq:"PAGAMENTO PRESTADORES",cm:"A",cv:"M",cf:"U",fv:"!OPERADORA|RESSARCIMENTO"},
- {k:"interD",lb:"Intercâmbio",ds:"Unimeds",g:"D",sg:"Eventos conhecidos e avisados",arq:"PAGAMENTO PRESTADORES",cm:"A",cv:"M",cf:"U",fv:"OPERADORA"},
+ {k:"contra",lb:"Contraprestações + Coparticipações",g:"R",arq:"RECEITA POR COMPETENCIA",cm:"H",cv:"E",cf:"TIPOFATURAMENTO",fv:"LOCAL",ch:"DOCUMENTO,CONTRATO",ca:"A"},
+ {k:"interR",lb:"Intercâmbio",ds:"Unimeds",g:"R",arq:"RECEITA POR COMPETENCIA",cm:"AG",cv:"E",cf:"TIPOFATURAMENTO",fv:"INTERCAMBIO",ch:"DOCUMENTO,CONTRATO",ca:"A"},
+ {k:"event",lb:"Rede prestadora",g:"D",sg:"Eventos conhecidos e avisados",arq:"PAGAMENTO PRESTADORES",cm:"T",cv:"M",cf:"U",fv:"!OPERADORA|RESSARCIMENTO"},
+ {k:"interD",lb:"Intercâmbio",ds:"Unimeds",g:"D",sg:"Eventos conhecidos e avisados",arq:"PAGAMENTO PRESTADORES",cm:"T",cv:"M",cf:"U",fv:"OPERADORA"},
  {k:"rp",lb:"Recursos Próprios",ds:"CMU + Onco + SAD",g:"D",sg:"Eventos conhecidos e avisados",arq:"DIVISAO DE PAGAMENTO ABERTO",cm:"I",cv:"G"},
  {k:"rpseg",lb:"Detalhamento Recursos Próprios (Grupo 7)",ds:"Informativo — não soma nos totais",g:"D",pai:"rp",info:true,arq:"GRUPO 7",cm:"N",cv:"J",seg:"AE"},
- {k:"rsus",lb:"Ressarcimento ao SUS",g:"D",sg:"Eventos conhecidos e avisados",arq:"PAGAMENTO PRESTADORES",cm:"A",cv:"M",cf:"U",fv:"RESSARCIMENTO"},
- {k:"opme",lb:"Fornecedores",ds:"OPME",g:"D",arq:"OPME",cm:"G",cv:"K"},
+ {k:"rsus",lb:"Ressarcimento ao SUS",g:"D",sg:"Eventos conhecidos e avisados",arq:"PAGAMENTO PRESTADORES",cm:"T",cv:"M",cf:"U",fv:"RESSARCIMENTO"},
+ {k:"opme",lb:"Fornecedores",ds:"OPME",g:"D",arq:"OPME",cm:"F",cv:"K"},
  {k:"reemb",lb:"Reembolso",ds:"Assistencial",g:"D",arq:"REEMBOLSO",cm:"T",cv:"R"}];
 /* subgrupos: linhas com o mesmo "sg" ficam agrupadas; "ds" é a nomenclatura mostrada ao passar o mouse */
 const SGA={};let DADOS_V=0;
 const LL=()=>ST.linhas.concat(ST.virt||[]);
 const segNome=v=>String(v==null?"":v).trim().replace(/assitencial/gi,m=>m===m.toUpperCase()?"ASSISTENCIAL":m[0]==="A"?"Assistencial":"assistencial")||"(sem classificação)";
 function segSelLer(){try{const o=JSON.parse(localStorage.getItem("issqn.segsel")||"{}")||{};for(const k in o)if(Array.isArray(o[k]))o[k]=[...new Set(o[k].map(segNome))];return o;}catch(e){return{};}}
-function segSelGravar(o){try{localStorage.setItem("issqn.segsel",JSON.stringify(o));}catch(e){}}
+function segSelGravar(o){DADOS_V++;try{localStorage.setItem("issqn.segsel",JSON.stringify(o));}catch(e){}}
 const fatOn=pk=>{const v=segSelLer()["__fat:"+pk];return v!==false;};
 function montarVirt(res){
  const sel=segSelLer(),vt=[];
@@ -523,6 +565,9 @@ const lbH=l=>l.ds?'<span class="dsc" title="'+esc(l.ds).replace(/"/g,"&quot;")+'
 function sgToggle(n){SGA[n]=!SGA[n];matriz();detalhe();}
 function migrar(){
  try{if(!localStorage.getItem("issqn.mig10")){if(!ST.linhas.some(l=>l.k==="rpseg")){const i=ST.linhas.findIndex(l=>l.k==="rp");ST.linhas.splice(i>=0?i+1:ST.linhas.length,0,{k:"rpseg",lb:"Detalhamento Recursos Próprios (Grupo 7)",ds:"Informativo — não soma nos totais",g:"D",pai:"rp",info:true,arq:"GRUPO 7",cm:"N",cv:"J",seg:"AE"});}localStorage.setItem("issqn.mig10","1");salvar();}}catch(e){}
+ try{if(!localStorage.getItem("issqn.mig11")){const C={contra:["A","H"],interR:["A","AG"],event:["A","T"],interD:["A","T"],rsus:["A","T"],opme:["G","F"]};for(const l of ST.linhas){const c=C[l.k];if(c&&String(l.cm).toUpperCase()===c[0])l.cm=c[1];}localStorage.setItem("issqn.mig11","1");salvar();}}catch(e){}
+ try{if(!localStorage.getItem("issqn.mig12")){for(const l of ST.linhas)if((l.k==="contra"||l.k==="interR")&&!l.ch)l.ch="DOCUMENTO,CONTRATO";localStorage.setItem("issqn.mig12","1");salvar();}}catch(e){}
+ try{if(!localStorage.getItem("issqn.mig13")){for(const l of ST.linhas)if((l.k==="contra"||l.k==="interR")&&!l.ca)l.ca="A";localStorage.setItem("issqn.mig13","1");salvar();}}catch(e){}
  try{if(!localStorage.getItem("issqn.mig9")){ST.linhas.forEach(l=>{if((l.k==="contra"||l.k==="interR")&&String(l.cm).toUpperCase()==="C")l.cm="A";});localStorage.setItem("issqn.mig9","1");salvar();}}catch(e){}
  try{if(!localStorage.getItem("issqn.mig8")){
   ST.linhas.forEach(l=>{
@@ -605,8 +650,11 @@ const estSrc=m=>{const s=(ST.estArq||{})._src||{};return(s[ST.ano]||{})[m]||"";}
 const estArqM=m=>{const y=(ST.estArq||{})[ST.ano];return y&&typeof y[m]==="number"?y[m]:0;};
 const estManual=m=>{const v=estLer()[m];return typeof v==="number";};
 const estM=m=>{const p=estArqM(m);if(p)return p;const v=estLer()[m];return typeof v==="number"?v:0;};
-const difM=m=>impM(m)-estM(m);
-function salvar(){try{localStorage.setItem("issqn.v5.linhas",JSON.stringify(ST.linhas));localStorage.setItem(lskey(),JSON.stringify({aliq:ST.aliq,fano:ST.fano,ov:ST.ov,alvo:ST.alvo}));}catch(e){}}
+/* Valor a provisionar = imposto devido (negativo vira zero) − ISS-Estimativa; só calcula no mês com ISS-Estimativa e com movimento apurado */
+const difX=(i,e,mov)=>e>0&&mov?Math.max(i,0)-e:null;
+const movM=m=>!!(recM(m)||despM(m));
+const difM=m=>difX(impM(m),estM(m),movM(m))||0;
+function salvar(){DADOS_V++;try{localStorage.setItem("issqn.v5.linhas",JSON.stringify(ST.linhas));localStorage.setItem(lskey(),JSON.stringify({aliq:ST.aliq,fano:ST.fano,ov:ST.ov,alvo:ST.alvo}));}catch(e){}}
 function carregarAno(){ST.ov={};ST.alvo={};try{const d=JSON.parse(localStorage.getItem(lskey())||"{}");if(d.ov)ST.ov=d.ov;if(d.alvo)ST.alvo=d.alvo;if(typeof d.aliq==="number")ST.aliq=d.aliq;if(typeof d.fano==="boolean")ST.fano=d.fano;}catch(e){}$("#aliq").value=ST.aliq;$("#fano").checked=ST.fano;}
 function inicial(){
  try{const l=JSON.parse(localStorage.getItem("issqn.v5.linhas")||"null");if(Array.isArray(l)&&l.length)ST.linhas=l;}catch(e){}
@@ -769,7 +817,7 @@ function renderArquivos(){
  const bs=$("#baseSt");if(bs){bs.innerHTML=BASE_ST;bs.hidden=!BASE_ST;}
  $("#cnt").textContent=ST.arqs.length?"("+ST.arqs.length+")":"";
  const gr=new Map();
- ST.arqs.forEach((a,i)=>{const ls=a.forcada?ST.linhas.filter(l=>l.k===a.forcada):linhasDoArquivo(a);const k=ls.length?ls.map(l=>l.lb).join(" · "):ehEstArq(a)?"ISS pago por estimativa (planilha)":"";if(!gr.has(k))gr.set(k,{ls,itens:[]});gr.get(k).itens.push({a,i});});
+ ST.arqs.forEach((a,i)=>{const ls=a.forcada?ST.linhas.filter(l=>l.k===a.forcada):linhasDoArquivo(a);const k=ls.length?ls.map(l=>l.lb).join(" · "):ehEstArq(a)?"ISS-Estimativa (planilha)":"";if(!gr.has(k))gr.set(k,{ls,itens:[]});gr.get(k).itens.push({a,i});});
  const opts=a=>['<option value="">— vincular a uma linha —</option>'].concat(ST.linhas.map(l=>'<option value="'+l.k+'"'+(a.forcada===l.k?" selected":"")+">"+esc(l.lb)+"</option>")).join("");
  [...gr.entries()].sort((x,y)=>(x[0]?1:0)-(y[0]?1:0)).forEach(([k,g])=>{
   const li=document.createElement("li"),nr=!k,ab=nr||ABERTOS[k];if(!g.ls.length&&k)g.ls=[{lb:k}];
@@ -800,6 +848,10 @@ function pmCol(a,c){const k=cc(a);if(k.pm[c])return k.pm[c];const R=a._r,n=R.len
 function pvCol(a,c){const k=cc(a);if(k.pv[c])return k.pv[c];const R=a._r,n=R.length,v=new Float64Array(n);for(let i=0;i<n;i++){const r=R[i];if(r)v[i]=parseVal(r[c]);}return k.pv[c]=v;}
 function pnCol(a,c){const k=cc(a);if(k.pn[c])return k.pn[c];const R=a._r,n=R.length,v=new Array(n);for(let i=0;i<n;i++){const r=R[i];v[i]=r?norm(r[c]).trim():"";}return k.pn[c]=v;}
 function neCol(a){const k=cc(a);if(k.ne)return k.ne;const R=a._r,n=R.length,v=new Uint8Array(n);for(let i=0;i<n;i++){const r=R[i];if(r&&r.length)for(const x of r)if(x!==null&&x!==""){v[i]=1;break;}}return k.ne=v;}
+/* chave do lançamento por colunas escolhidas (ex.: DOCUMENTO,CONTRATO): o mesmo documento em relatórios sobrepostos conta uma vez só */
+function chCol(a,cols){const k=cc(a),id="ch:"+cols.join(",");k.chv=k.chv||{};if(k.chv[id])return k.chv[id];const R=a._r,n=R.length,v=new Array(n);
+ for(let i=0;i<n;i++){const r=R[i];if(!r){v[i]="";continue;}let s="",ok=false;for(const c of cols){const x=r[c];let t=x==null?"":x instanceof Date?String(x.getTime()):String(x).trim().toUpperCase();if(/^\d+([.,]0+)?$/.test(t))t=t.replace(/[.,]0+$/,"").replace(/^0+(?=\d)/,""); /* 0511 = 511 */if(t)ok=true;s+=t+"\u0001";}v[i]=ok?s:"";}
+ return k.chv[id]=v;}
 function pkCol(a){const k=cc(a);if(k.pk)return k.pk;const R=a._r,n=R.length,v=new Array(n);for(let i=0;i<n;i++){const r=R[i];v[i]=r?r.map(x=>x instanceof Date?x.getTime():x).join("\u0001"):"";}return k.pk=v;}
 function filtroV(l){const raw=String(l.fv||"").trim();if(!raw)return null;const neg=raw.startsWith("!"),alts=norm(neg?raw.slice(1):raw).split("|").map(x=>x.trim()).filter(Boolean);if(!alts.length)return null;
  const memo=new Map();return v=>{let h=memo.get(v);if(h===undefined){h=alts.some(a=>(a==="(VAZIO)"||a==="VAZIO")?v==="":(a[0]==="^"?v.startsWith(a.slice(1).trim()):v.includes(a)));h=neg?!h:h;memo.set(v,h);}return h;};}
@@ -830,7 +882,8 @@ function calcRes(){
   const o={m:{},det:{},lin:0,fora:0,filt:0,semMes:0,zero:0,dup:0,arqs:[],cols:"",erro:"",pa:{},seg:{},segc:{},anos:{}};for(let i=1;i<=12;i++){o.m[i]=0;o.det[i]=[];}
   if(l.arq&&l.cm&&l.cv){
    const alvo=ST.arqs.filter(a=>a.forcada?a.forcada===l.k:(!a.forcada&&casa(a,l.arq)));
-   const vistos=alvo.length>1&&ST.dedup!==false?new Map():null;
+   const vistos=(alvo.length>1||l.ch)&&ST.dedup!==false?new Map():null;
+   if(l.ch)alvo.sort((x,y)=>(y.mod||0)-(x.mod||0)||String(y.nome).localeCompare(String(x.nome))); /* com chave: o relatório mais recente prevalece */
    for(const a of alvo){
     o.arqs.push(a.nome);const P=o.pa[a.nome]={lin:0,fora:0,filt:0,semMes:0,zero:0,dup:0,v:0,ms:new Set(),erro:"",tot:0,anos:{}};
     const cm=resolveCol(a,l.cm),cv=String(l.cv).split(/[,;]+/).map(s=>resolveCol(a,s)).filter(i=>i>=0),cf=l.cf?resolveCol(a,l.cf):-1;
@@ -839,19 +892,21 @@ function calcRes(){
     if(!cv.length){o.erro=P.erro="coluna de valor não localizada";continue;}
     if(l.cf&&cf<0){o.erro=P.erro="coluna do filtro não localizada";continue;}
     const ff=cf>=0?filtroV(l):null,sc=l.seg?resolveCol(a,l.seg):-1;if(sc>=0)o.segc[a.nome]=sc;
-    const R=rows(a),hi=cabecalho(a).i,PM=pmCol(a,cm),PV=cv.map(c=>pvCol(a,c)),PN=ff?pnCol(a,cf):null,NE=neCol(a),PK=vistos?pkCol(a):null,fa=ST.fano,an=ST.ano;
+    const R=rows(a),hi=cabecalho(a).i,PM=pmCol(a,cm),PV=cv.map(c=>pvCol(a,c)),PN=ff?pnCol(a,cf):null,NE=neCol(a),chc=l.ch?String(l.ch).split(/[,;]+/).map(x=>resolveCol(a,x.trim())).filter(x=>x>=0):[],PK=vistos?(chc.length?chCol(a,chc):pkCol(a)):null,cA=l.ca?resolveCol(a,l.ca):-1,PA=cA>=0&&cA!==cm?pmCol(a,cA):null,fa=ST.fano,an=ST.ano;
     for(let ri=0;ri<R.length;ri++){
      if(!NE[ri])continue;
-     const mm=PM.m[ri],ya=PM.y[ri];
+     const mm=PM.m[ri];let ya=PM.y[ri];
+     if(PA){const yA=PA.y[ri];if(yA&&ya&&yA!==ya)ya=-yA;} /* coluna "ano": só entra no ano-base se a competência (ex.: A) for do mesmo ano da data usada no mês */
      const cab0=ri<=hi;if(!cab0)P.tot++;
      if(!mm){if(!cab0){o.semMes++;P.semMes++;}continue;}
      if(ff&&!ff(PN[ri])){o.filt++;P.filt++;continue;}
-     if(ya){o.anos[ya]=(o.anos[ya]||0)+1;P.anos[ya]=(P.anos[ya]||0)+1;}
+     if(vistos&&chc.length){const ch=PK[ri];if(ch){const f0=vistos.get(ch);if(f0!==undefined&&f0!==a.nome){o.dup++;P.dup++;continue;}if(f0===undefined)vistos.set(ch,a.nome);}}
+     if(ya>0){o.anos[ya]=(o.anos[ya]||0)+1;P.anos[ya]=(P.anos[ya]||0)+1;}
      if(fa&&ya&&ya!==an){o.fora++;P.fora++;continue;}
      let v=0;for(let j=0;j<PV.length;j++)v+=PV[j][ri];
      if(!v){o.zero++;P.zero++;continue;}
      const r=R[ri];
-     if(vistos){const ch=mm+"\u0002"+PK[ri],f0=vistos.get(ch);if(f0!==undefined&&f0!==a.nome){o.dup++;P.dup++;continue;}if(f0===undefined)vistos.set(ch,a.nome);}
+     if(vistos&&!chc.length){const ch=mm+"\u0002"+PK[ri],f0=vistos.get(ch);if(f0!==undefined&&f0!==a.nome){o.dup++;P.dup++;continue;}if(f0===undefined)vistos.set(ch,a.nome);}
      o.m[mm]+=v;o.lin++;P.lin++;P.v+=v;P.ms.add(mm+(ya&&ya!==an?"/"+ya:""));
      o.det[mm].push({f:a.nome,ln:ri+1,v,r});
      if(sc>=0){const sk=segNome(r[sc]),sg2=o.seg[sk]=o.seg[sk]||{};sg2[mm]=(sg2[mm]||0)+v;}
@@ -952,7 +1007,7 @@ function conferir(){
   const P=x.P,fora=P?P.semMes+P.fora+P.dup:0;
   if(so&&x.l&&!fora&&!P.erro)continue;
   n++;const nm='<b title="'+esc(x.a.nome).replace(/"/g,"&quot;")+'">'+esc(x.a.nome.length>60?"…"+x.a.nome.slice(-58):x.a.nome)+"</b>";
-  if(!x.l&&ehEstArq(x.a)){const y=lerEstArq(),an=Object.keys(y).sort();h+='<tr class="fa"><td>'+nm+"</td><td>"+esc(x.a.aba)+'</td><td colspan="11" class="'+(an.length?"ok":"nr")+'">'+(an.length?"ISS pago por estimativa — "+an.length+" anos lidos ("+an.join(", ")+")":"planilha de estimativa sem a linha de cabeçalho “Ano | Jan | Fev …”")+"</td></tr>";continue;}
+  if(!x.l&&ehEstArq(x.a)){const y=lerEstArq(),an=Object.keys(y).sort();h+='<tr class="fa"><td>'+nm+"</td><td>"+esc(x.a.aba)+'</td><td colspan="11" class="'+(an.length?"ok":"nr")+'">'+(an.length?"ISS-Estimativa — "+an.length+" anos lidos ("+an.join(", ")+")":"planilha de estimativa sem a linha de cabeçalho “Ano | Jan | Fev …”")+"</td></tr>";continue;}
   if(!x.l){h+='<tr class="fa"><td>'+nm+"</td><td>"+esc(x.a.aba)+'</td><td class="nr" colspan="11">nome não reconhecido — este arquivo NÃO entra na apuração. Vincule-o a uma linha na lista de arquivos ou ajuste "Arquivo contém" no mapeamento.</td></tr>';continue;}
   h+="<tr"+(x.pri?' class="fa"':"")+"><td>"+(x.pri?nm:"")+"</td><td>"+(x.pri?esc(x.a.aba)+(x.a.abas.length>1?' <span class="ruim" title="Só a aba escolhida é lida: '+esc(x.a.abas.join(", ")).replace(/"/g,"&quot;")+'">(+'+(x.a.abas.length-1)+" abas)</span>":""):"")+"</td><td>"+esc(x.l.lb)+"</td>"+
    (P.erro?'<td class="nr" colspan="10">'+esc(P.erro)+" — confira o mapeamento</td>":
@@ -962,6 +1017,34 @@ function conferir(){
  const nr=ls.filter(x=>!x.l).length,semM=ls.filter(x=>x.P&&x.P.semMes).length,out=ls.filter(x=>x.P&&x.P.fora).length;
  $("#confD").innerHTML='<p class="hint" style="margin:0 0 8px">'+ST.arqs.length+" arquivos na base · "+(nr?'<span class="nr">'+nr+" não reconhecidos</span> · ":"")+(semM?'<span class="ruim">'+semM+" com linhas sem data válida</span> · ":"")+(out?'<span class="ruim">'+out+" com lançamentos de outro ano (desmarque “só lançamentos do ano-base” para incluí-los)</span> · ":"")+"“Fora do filtro” é normal quando o mesmo arquivo alimenta mais de uma linha (ex.: Rede prestadora × Intercâmbio).</p>"+(n?h:'<p class="hint">Nenhum arquivo com pendência.</p>');
  const d=$("#conf");if(!d.open)d.showModal();
+}
+/* mapa de colunas: de onde sai cada linha (com o nome do cabeçalho do arquivo real) */
+function mapaCols(){
+ const out=[];
+ for(const l of ST.linhas){
+  if(!l.arq)continue;
+  const fs=ST.arqs.filter(a=>a.forcada?a.forcada===l.k:(!a.forcada&&casa(a,l.arq))).sort((x,y)=>String(y.nome).localeCompare(String(x.nome)));
+  const a=fs[0],cab=a?cabecalho(a).cab:[];
+  const nm=spec=>{if(!spec)return["",""];if(!a)return[/^[A-Z]{1,3}$/i.test(spec)?String(spec).toUpperCase():"",/^[A-Z]{1,3}$/i.test(spec)?"(sem arquivo carregado)":spec];
+   const ix=resolveCol(a,spec);return ix<0?["?","não localizada ("+spec+")"]:[letra(ix),String(cab[ix]==null?"":cab[ix]).trim()||"(sem nome)"];};
+  const cm=nm(l.cm),cv=String(l.cv||"").split(/[,;]+/).filter(Boolean).map(nm),cf=nm(l.cf),sg=nm(l.seg);
+  out.push({g:l.g==="R"?"Receita":"Despesa",lb:l.lb+(l.info?" (detalhamento)":""),sub:l.sg||"",arq:l.arq,ex:a?a.nome+(a.aba?" · "+a.aba:""):"",n:fs.length,cm,cv,cf,fv:l.fv||"",sg});
+ }
+ return out;
+}
+function mapaVer(){
+ const M=mapaCols(),e=esc;
+ let h='<p class="hint" style="margin:0 0 6px">Nome da coluna lido do cabeçalho do arquivo mais recente de cada linha. Regras em Configurar linhas.</p><div class="scr"><table class="anT"><thead><tr><th>Tipo</th><th>Descrição</th><th>Arquivo (nome contém)</th><th>Competência</th><th>Valor</th><th>Filtro</th><th>Classificação</th><th>Arquivo lido</th></tr></thead><tbody>';
+ for(const x of M){const c=(p)=>p[0]?"<b>"+e(p[0])+"</b> "+e(p[1]):"–";
+  h+="<tr><td>"+x.g+"</td><td>"+e(x.lb)+(x.sub?'<br><span class="hint">'+e(x.sub)+"</span>":"")+"</td><td>"+e(x.arq)+"</td><td>"+c(x.cm)+"</td><td>"+(x.cv.length?x.cv.map(c).join(" + "):"–")+"</td><td>"+(x.cf[0]?c(x.cf)+'<br><span class="hint">'+e(x.fv)+"</span>":"–")+"</td><td>"+c(x.sg)+"</td><td>"+(x.ex?e(x.ex)+'<br><span class="hint">'+x.n+" arquivo(s)</span>":'<span class="hint">nenhum arquivo</span>')+"</td></tr>";}
+ h+='</tbody></table></div><p style="margin-top:8px"><button id="mapaXl">Exportar mapa (Excel)</button> <button id="mapaVolta">Voltar à conferência</button></p>';
+ $("#confD").innerHTML=h;$("#mapaXl").onclick=mapaXlsx;$("#mapaVolta").onclick=conferir;
+ if(!$("#conf").open)$("#conf").showModal();
+}
+function mapaXlsx(){
+ const o=[["Tipo","Descrição","Subgrupo","Arquivo (nome contém)","Competência - coluna","Competência - nome","Valor - coluna","Valor - nome","Filtro - coluna","Filtro - nome","Filtro - texto","Classificação - coluna","Classificação - nome","Arquivo lido (exemplo)","Qtde arquivos"]];
+ for(const x of mapaCols())o.push([x.g,x.lb,x.sub,x.arq,x.cm[0],x.cm[1],x.cv.map(p=>p[0]).join(" + "),x.cv.map(p=>p[1]).join(" + "),x.cf[0],x.cf[1],x.fv,x.sg[0],x.sg[1],x.ex,x.n]);
+ xlsSalvar("mapa-colunas-issqn.xlsx",[["Mapa de colunas",xlsSheet(o,[9,36,26,28,10,22,10,22,10,22,26,12,20,50,10],{intc:[14]})]]);
 }
 function confXlsx(){
  const o=[["Arquivo","Aba","Linha da apuração","Linhas com dados","Somados","Valor somado","Meses","Sem data","Outro ano","Fora do filtro","Valor zero","Repetidos","Situação"]];
@@ -1234,89 +1317,103 @@ function estat(){
  $("#estAnoT").textContent=String(ST.ano);
  ecomp();
 }
-/* comparativo entre anos: apurado × estimativa */
-const EC={anos:null,ms:[],foco:null};
+/* comparativo entre anos: apurado × ISS-Estimativa */
+const EC={anos:null,ms:[],foco:null,rol:60};
 function ecDados(){
  if(!(HIST&&HIST_V===DADOS_V)){HIST=histAnos();HIST_V=DADOS_V;}
  const H=HIST,todos=H.map(h=>h.ano);
  if(!EC.anos)EC.anos=new Set(todos);
- const ms=EC.ms.length?EC.ms.slice().sort((a,b)=>a-b):[1,2,3,4,5,6,7,8,9,10,11,12];
+ let ms=EC.ms.length?EC.ms.slice().sort((a,b)=>a-b):[1,2,3,4,5,6,7,8,9,10,11,12],Hs=H.filter(h=>EC.anos.has(h.ano)),per=EC.ms.length&&ms.length<12?(ms.every((x,i)=>!i||x===ms[i-1]+1)?ABR[ms[0]]+" a "+ABR[ms[ms.length-1]]:ms.map(x=>ABR[x]).join(", ")):"ano inteiro";
+ const fim=EC.fimSel||afFim(H);
+ if(EC.rol&&fim){const e=fim.a*12+fim.m-1,b=e-EC.rol+1,ini={a:Math.floor(b/12),m:b%12+1},inW=(a,m)=>{const k=a*12+m-1;return k>=b&&k<=e;};
+  ms=[1,2,3,4,5,6,7,8,9,10,11,12];per="últimos "+EC.rol+" meses ("+ABR[ini.m]+"/"+ini.a+" a "+ABR[fim.m]+"/"+fim.a+")";
+  Hs=H.filter(h=>h.ano>=ini.a&&h.ano<=fim.a).map(h=>{const o={ano:h.ano,aliq:h.aliq};["R","D","B","I","E","F"].forEach(k=>o[k]=h[k].map((v,i)=>inW(h.ano,i+1)?v:null));return o;});}
  const sm=(arr)=>ms.reduce((s,m)=>s+(arr[m-1]||0),0);
- const lin=H.filter(h=>EC.anos.has(h.ano)).map(h=>({ano:h.ano,aliq:h.aliq,R:sm(h.R),D:sm(h.D),B:sm(h.B),I:sm(h.I),E:sm(h.E),mI:h.I,mE:h.E}));
- return{H,todos,ms,lin};
+ const lin=Hs.map(h=>({ano:h.ano,aliq:h.aliq,R:sm(h.R),D:sm(h.D),B:sm(h.B),I:sm(h.I),E:sm(h.E),F:sm(h.F),tF:ms.some(m=>h.F[m-1]!==null),mI:h.I,mE:h.E,mF:h.F,mR:h.R}));
+ return{H,todos,ms,lin,per};
 }
 function ecomp(){
  const {H,todos,ms,lin}=ecDados();
  if(!H.length){$("#ecInfo").textContent="";["#ecAnos","#ecMes","#ecCards","#ecGraf","#ecFoco","#ecGrafM"].forEach(x=>$(x).innerHTML="");$("#ecTab").innerHTML='<tbody><tr><td class="hint">Sem dados. Carregue as planilhas.</td></tr></tbody>';$("#ecMesT").innerHTML="";return;}
- $("#ecAnos").innerHTML=todos.map(y=>'<button data-y="'+y+'"'+(EC.anos.has(y)?' class="on"':"")+">"+y+"</button>").join("")+'<span style="width:8px"></span><button data-ya="t">Todos</button><button data-ya="u" title="Últimos 3 anos">Últimos 3</button>';
- $("#ecAnos").querySelectorAll("[data-y]").forEach(b=>b.onclick=()=>{const y=+b.dataset.y;EC.anos.has(y)?EC.anos.delete(y):EC.anos.add(y);if(!EC.anos.size)EC.anos.add(y);ecomp();});
- $("#ecAnos").querySelectorAll("[data-ya]").forEach(b=>b.onclick=()=>{EC.anos=new Set(b.dataset.ya==="t"?todos:todos.slice(-3));ecomp();});
+ const rl=[[60,"Últimos 60 meses (5 anos)"],[36,"Últimos 36 meses"],[12,"Últimos 12 meses"]];
+ $("#ecAnos").innerHTML=rl.map(([n,t])=>'<button data-r="'+n+'"'+(EC.rol===n?' class="on"':"")+' title="Soma os '+n+' meses corridos até o último mês com movimento">'+t+"</button>").join("")+'<span style="width:8px"></span>'+todos.map(y=>'<button data-y="'+y+'"'+(!EC.rol&&EC.anos.has(y)?' class="on"':"")+">"+y+"</button>").join("")+'<button data-ya="t">Todos os anos</button><span style="width:8px"></span><button id="ecMsTg" title="Mostrar ou ocultar o filtro por meses">'+(EC.rol?"Mês final":"Meses")+($("#ecMesL").hidden?" ▸":" ▾")+(EC.rol?(EC.fimSel?" ("+ABR[EC.fimSel.m]+"/"+EC.fimSel.a+")":""):EC.ms.length?" ("+EC.ms.length+")":"")+"</button>";
+ $("#ecMsTg").onclick=()=>{$("#ecMesL").hidden=!$("#ecMesL").hidden;ecomp();};
+ $("#ecAnos").querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{EC.rol=+b.dataset.r;EC.ms=[];ecomp();});
+ $("#ecAnos").querySelectorAll("[data-y]").forEach(b=>b.onclick=()=>{const y=+b.dataset.y;if(EC.rol){EC.rol=0;EC.anos=new Set([y]);}else{EC.anos.has(y)?EC.anos.delete(y):EC.anos.add(y);if(!EC.anos.size)EC.anos.add(y);}ecomp();});
+ $("#ecAnos").querySelectorAll("[data-ya]").forEach(b=>b.onclick=()=>{EC.rol=0;EC.anos=new Set(todos);ecomp();});
  const tri=[["1º tri",[1,2,3]],["2º tri",[4,5,6]],["3º tri",[7,8,9]],["4º tri",[10,11,12]],["1º sem",[1,2,3,4,5,6]],["2º sem",[7,8,9,10,11,12]]];
- $("#ecMes").innerHTML=ABR.slice(1).map((a,i)=>'<button data-m="'+(i+1)+'"'+(EC.ms.indexOf(i+1)>=0?' class="on"':"")+">"+a+"</button>").join("")+'<span style="width:8px"></span><button data-ma=""'+(EC.ms.length?"":' class="on"')+'>Ano inteiro</button>'+tri.map(([t,v])=>'<button data-ma="'+v.join(",")+'">'+t+"</button>").join("")+'<button data-ma="ytd" title="Meses já apurados no ano mais recente — compara todos os anos no mesmo período">Mesmo período do ano atual</button>';
- $("#ecMes").querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{const m=+b.dataset.m,i=EC.ms.indexOf(m);i>=0?EC.ms.splice(i,1):EC.ms.push(m);ecomp();});
- $("#ecMes").querySelectorAll("[data-ma]").forEach(b=>b.onclick=()=>{const v=b.dataset.ma;if(v==="ytd"){const u=H[H.length-1],a=[];u.I.forEach((x,i)=>{if(x||u.R[i]||u.D[i])a.push(i+1);});EC.ms=a.length?[...Array(Math.max(...a)).keys()].map(i=>i+1):[];}else EC.ms=v?v.split(",").map(Number):[];ecomp();});
- const per=EC.ms.length?(ms.length===12?"ano inteiro":ms.every((x,i)=>!i||x===ms[i-1]+1)?ABR[ms[0]]+" a "+ABR[ms[ms.length-1]]:ms.map(x=>ABR[x]).join(", ")):"ano inteiro";
+ $("#ecMes").innerHTML=ABR.slice(1).map((a,i)=>'<button data-m="'+(i+1)+'"'+(!EC.rol&&EC.ms.indexOf(i+1)>=0?' class="on"':"")+">"+a+"</button>").join("")+'<span style="width:8px"></span><button data-ma=""'+(EC.rol||EC.ms.length?"":' class="on"')+'>Ano inteiro</button>'+tri.map(([t,v])=>'<button data-ma="'+v.join(",")+'">'+t+"</button>").join("")+'<button data-ma="ytd" title="Meses já apurados no ano mais recente — compara todos os anos no mesmo período">Mesmo período do ano atual</button>';
+ $("#ecMes").querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{if(EC.rol){EC.rol=0;EC.ms=[];}const m=+b.dataset.m,i=EC.ms.indexOf(m);i>=0?EC.ms.splice(i,1):EC.ms.push(m);ecomp();});
+ $("#ecMes").querySelectorAll("[data-ma]").forEach(b=>b.onclick=()=>{EC.rol=0;const v=b.dataset.ma;if(v==="ytd"){const u=H[H.length-1],a=[];u.I.forEach((x,i)=>{if(x||u.R[i]||u.D[i])a.push(i+1);});EC.ms=a.length?[...Array(Math.max(...a)).keys()].map(i=>i+1):[];}else EC.ms=v?v.split(",").map(Number):[];ecomp();});
+ if(EC.rol)rolMes($("#ecMes"),EC,H,ecomp);
+ const per=ecDados().per;
  $("#ecInfo").textContent=lin.length+(lin.length>1?" anos":" ano")+" · "+per;
  const tI=smA(lin.map(x=>x.I)),tE=smA(lin.map(x=>x.E)),cE=lin.filter(x=>x.E&&x.I);
  const card=(c,t,v,sub)=>'<div class="card '+c+'"><span>'+t+"</span><b>"+v+"</b>"+(sub?"<span>"+sub+"</span>":"")+"</div>";
- const mxD=lin.filter(x=>x.E).sort((a,b)=>Math.abs(b.I-b.E)-Math.abs(a.I-a.E))[0];
- $("#ecCards").innerHTML=card("i","ISS apurado",rs(tI),per)+card("","ISS pago por estimativa",rs(tE),cE.length+" de "+lin.length+" anos com estimativa")+
-  card(tI-tE>0?"d":"i","Apurado − estimativa",tE?rs(tI-tE):"–",tE?(tI-tE>0?"apurado acima do estimado":"estimativa acima do apurado"):"")+
-  card("","Estimativa ÷ apurado",tI&&tE?fmt(tE/tI*100)+"%":"–","quanto da apuração a estimativa cobre")+
-  card("","Maior diferença",mxD?rs(mxD.I-mxD.E):"–",mxD?String(mxD.ano):"");
- $("#ecGraf").innerHTML=ecBarras(lin.map(x=>({t:String(x.ano),a:x.I,b:x.E,k:x.ano})),"ISS apurado","ISS pago por estimativa");
+ const mxD=lin.filter(x=>x.tF).sort((a,b)=>Math.abs(b.F)-Math.abs(a.F))[0],tF=smA(lin.map(x=>x.F)),hF=lin.some(x=>x.tF);
+ $("#ecCards").innerHTML=card("i","ISS apurado",rs(tI),per)+card("e","ISS-Estimativa",rs(tE),cE.length+" de "+lin.length+" anos com ISS-Estimativa")+
+  card(tF>0?"p":"n","Valor a provisionar",hF?rs(tF):"–",hF?(tF>0?"apurado acima da ISS-Estimativa":"ISS-Estimativa acima do apurado")+" · só meses com os dois valores":"")+
+  card("","ISS-Estimativa ÷ apurado",tI&&tE?fmt(tE/tI*100)+"%":"–","quanto da apuração a ISS-Estimativa cobre")+
+  card("","Maior diferença",mxD?rs(mxD.F):"–",mxD?String(mxD.ano):"");
+ {const mx=lin.filter(x=>x.I).sort((a,b)=>b.I-a.I)[0];
+  if(EC.foco==null||!lin.some(x=>x.ano===EC.foco))EC.foco=(lin.find(x=>x.ano===ST.ano)||lin[lin.length-1]||{}).ano;
+  let f=(/^últimos/.test(per)?"Nos <b>":"No período <b>")+per+"</b>, o ISS apurado somou <b>"+rs(tI)+"</b>"+(lin.length>1?" em "+lin.length+" anos":"")+". ";
+  if(tE)f+="A estimativa paga (<b>"+rs(tE)+"</b>) cobriu <b>"+(tI?fmt(tE/tI*100).replace(/,00$/,""):"–")+"%</b> do apurado"+(hF?(tF>0.005?" — <b style=\"color:var(--pv)\">faltam "+rs(tF)+" a provisionar</b>.":tF<-0.005?" — <b style=\"color:var(--nv)\">"+rs(-tF)+" pagos acima do apurado</b>.":"."):".")+" ";
+  if(mx&&lin.length>1)f+="O maior ISS anual foi em <b>"+mx.ano+"</b> ("+rs(mx.I)+").";
+  $("#ecHl").innerHTML=f;}
+ $("#ecGraf").innerHTML=ecBarras(lin.map(x=>({t:String(x.ano),a:x.I,b:x.E,k:x.ano})),"ISS apurado","ISS-Estimativa",EC.foco);
  $("#ecGraf").querySelectorAll(".mg").forEach(g=>g.onclick=()=>{EC.foco=+g.dataset.k;ecomp();});
- let h='<thead><tr><th>Ano</th><th>Receitas</th><th>Despesas</th><th>Sinistralidade</th><th>Base de cálculo</th><th>ISS apurado</th><th>ISS estimativa</th><th>Apurado − estimativa</th><th>Estimativa ÷ apurado</th><th>Var. ISS s/ ano ant.</th><th>Alíquota</th></tr></thead><tbody>';
+ let h='<thead><tr><th>Ano</th><th>Receitas</th><th>Despesas</th><th>Sinistralidade</th><th>Base de cálculo</th><th>ISS apurado</th><th>ISS-Estimativa</th><th>Valor a provisionar</th><th>ISS-Estimativa ÷ apurado</th><th>Var. ISS s/ ano ant.</th><th>Alíquota</th></tr></thead><tbody>';
  const c=(v,cl)=>"<td"+(cl?' class="'+cl+'"':v?"":' class="zero"')+">"+(v?fmt(v):"–")+"</td>";
  let ant=null;
  if(EC.foco==null||!lin.some(x=>x.ano===EC.foco))EC.foco=(lin.find(x=>x.ano===ST.ano)||lin[lin.length-1]||{}).ano;
- lin.forEach(x=>{const df=x.E?x.I-x.E:0,vr=ant?(x.I-ant)/Math.abs(ant)*100:null;
-  h+='<tr data-y="'+x.ano+'"'+(x.ano===EC.foco?' class="foco"':"")+' title="Clique para ver o mês a mês de '+x.ano+'"><td>'+x.ano+"</td>"+c(x.R)+c(x.D)+"<td>"+(x.R?fmt(x.D/x.R*100)+"%":"–")+"</td>"+c(x.B)+c(x.I)+c(x.E)+c(df,x.E?(df>0?"pos":"neg"):"zero")+"<td>"+(x.E&&x.I?fmt(x.E/x.I*100)+"%":"–")+"</td><td>"+(vr===null?"–":(vr>0?"+":"")+fmt(vr)+"%")+"</td><td>"+fmt(x.aliq)+"%</td></tr>";
+ lin.forEach(x=>{const df=x.F,vr=ant?(x.I-ant)/Math.abs(ant)*100:null;
+  h+='<tr data-y="'+x.ano+'"'+(x.ano===EC.foco?' class="foco"':"")+' title="Clique para ver o mês a mês de '+x.ano+'"><td>'+x.ano+"</td>"+c(x.R)+c(x.D)+"<td>"+(x.R?fmt(x.D/x.R*100)+"%":"–")+"</td>"+c(x.B)+c(x.I)+c(x.E)+(x.tF?c(df,df>0?"pos":df<0?"neg":"zero"):c(0,"zero"))+"<td>"+(x.E&&x.I?fmt(x.E/x.I*100)+"%":"–")+"</td><td>"+(vr===null?"–":(vr>0?"+":"")+fmt(vr)+"%")+"</td><td>"+fmt(x.aliq)+"%</td></tr>";
   if(x.I)ant=x.I;});
  const T=k=>smA(lin.map(x=>x[k]));
- h+='<tr class="cons"><td>Total</td>'+c(T("R"))+c(T("D"))+"<td>"+(T("R")?fmt(T("D")/T("R")*100)+"%":"–")+"</td>"+c(T("B"))+c(tI)+c(tE)+c(tE?tI-tE:0)+"<td>"+(tI&&tE?fmt(tE/tI*100)+"%":"–")+"</td><td></td><td></td></tr></tbody>";
+ h+='<tr class="cons"><td>Total</td>'+c(T("R"))+c(T("D"))+"<td>"+(T("R")?fmt(T("D")/T("R")*100)+"%":"–")+"</td>"+c(T("B"))+c(tI)+c(tE)+c(hF?tF:0)+"<td>"+(tI&&tE?fmt(tE/tI*100)+"%":"–")+"</td><td></td><td></td></tr></tbody>";
  $("#ecTab").innerHTML=h;
  $("#ecTab").querySelectorAll("tr[data-y]").forEach(r=>r.onclick=()=>{EC.foco=+r.dataset.y;ecomp();});
  ecMes(lin,ms);
 }
-function ecMes(lin,ms){
- const x=lin.find(l=>l.ano===EC.foco);
+function ecMes(lin,ms0){
+ const x=lin.find(l=>l.ano===EC.foco),ms=x?ms0.filter(m=>x.mR[m-1]!==null):ms0;
  $("#ecFoco").innerHTML=lin.map(l=>'<button data-y="'+l.ano+'"'+(l.ano===EC.foco?' class="on"':"")+">"+l.ano+"</button>").join("");
  $("#ecFoco").querySelectorAll("button").forEach(b=>b.onclick=()=>{EC.foco=+b.dataset.y;ecomp();});
  if(!x){$("#ecFocoT").textContent="";$("#ecGrafM").innerHTML="";$("#ecMesT").innerHTML="";return;}
  $("#ecFocoT").textContent=String(x.ano);
- $("#ecGrafM").innerHTML=ecBarras(ms.map(m=>({t:ABR[m],a:x.mI[m-1],b:x.mE[m-1],k:m})),"ISS apurado","ISS pago por estimativa");
- let h='<thead><tr><th>Mês</th><th>ISS apurado</th><th>ISS estimativa</th><th>Apurado − estimativa</th><th>Estimativa ÷ apurado</th><th>Diferença acumulada</th></tr></thead><tbody>',ac=0;
- ms.forEach(m=>{const i=x.mI[m-1]||0,e=x.mE[m-1]||0,d=e?i-e:0;ac+=d;
-  h+="<tr><td>"+MES[m]+"</td><td"+(i?"":' class="zero"')+">"+(i?fmt(i):"–")+"</td><td"+(e?"":' class="zero"')+">"+(e?fmt(e):"–")+'</td><td class="'+(e?(d>0?"pos":"neg"):"zero")+'">'+(e?fmt(d):"–")+"</td><td>"+(i&&e?fmt(e/i*100)+"%":"–")+'</td><td class="'+(ac>0?"pos":ac<0?"neg":"zero")+'">'+(ac?fmt(ac):"–")+"</td></tr>";});
- h+='<tr class="cons"><td>Total</td><td>'+fmt(x.I)+"</td><td>"+fmt(x.E)+"</td><td>"+(x.E?fmt(x.I-x.E):"–")+"</td><td>"+(x.I&&x.E?fmt(x.E/x.I*100)+"%":"–")+"</td><td></td></tr></tbody>";
+ $("#ecGrafM").innerHTML=ecBarras(ms.map(m=>({t:ABR[m],a:x.mI[m-1],b:x.mE[m-1],k:m})),"ISS apurado","ISS-Estimativa");
+ let h='<thead><tr><th>Mês</th><th>ISS apurado</th><th>ISS-Estimativa</th><th>Valor a provisionar</th><th>ISS-Estimativa ÷ apurado</th><th>Diferença acumulada</th></tr></thead><tbody>',ac=0;
+ ms.forEach(m=>{const i=x.mI[m-1]||0,e=x.mE[m-1]||0,f=x.mF[m-1],d=f===null?0:f;ac+=d;
+  h+="<tr><td>"+MES[m]+"</td><td"+(i?"":' class="zero"')+">"+(i?fmt(i):"–")+"</td><td"+(e?"":' class="zero"')+">"+(e?fmt(e):"–")+'</td><td class="'+(f!==null?(d>0?"pos":"neg"):"zero")+'">'+(f!==null?fmt(d):"–")+"</td><td>"+(i&&e?fmt(e/i*100)+"%":"–")+'</td><td class="'+(ac>0?"pos":ac<0?"neg":"zero")+'">'+(ac?fmt(ac):"–")+"</td></tr>";});
+ h+='<tr class="cons"><td>Total</td><td>'+fmt(x.I)+"</td><td>"+fmt(x.E)+"</td><td>"+(x.tF?fmt(x.F):"–")+"</td><td>"+(x.I&&x.E?fmt(x.E/x.I*100)+"%":"–")+"</td><td></td></tr></tbody>";
  $("#ecMesT").innerHTML=h;
 }
-function ecPer(){const {ms}=ecDados();return{ms,per:EC.ms.length&&ms.length<12?(ms.every((x,i)=>!i||x===ms[i-1]+1)?ABR[ms[0]]+" a "+ABR[ms[ms.length-1]]:ms.map(x=>ABR[x]).join(", ")):"ano inteiro"};}
+function ecPer(){const {ms,per}=ecDados();return{ms,per};}
 function ecTabs(){
- const {lin,ms}=ecDados();if(!lin.length)return null;
+ let {lin,ms}=ecDados();if(!lin.length)return null;
  const pc=(a,b)=>a&&b?Math.round(a/b*10000)/100:"";
- const t=[["Ano","Receitas","Despesas","Sinistralidade %","Base de cálculo","ISS apurado","ISS estimativa","Apurado - estimativa","Estimativa / apurado %"]].concat(lin.map(x=>[x.ano,x.R,x.D,pc(x.D,x.R),x.B,x.I,x.E,x.E?x.I-x.E:"",pc(x.E,x.I)]));
- const T=k=>smA(lin.map(x=>x[k]));t.push(["Total",T("R"),T("D"),pc(T("D"),T("R")),T("B"),T("I"),T("E"),T("E")?T("I")-T("E"):"",pc(T("E"),T("I"))]);
+ const t=[["Ano","Receitas","Despesas","Sinistralidade %","Base de cálculo","ISS apurado","ISS-Estimativa","Valor a provisionar","ISS-Estimativa / apurado %"]].concat(lin.map(x=>[x.ano,x.R,x.D,pc(x.D,x.R),x.B,x.I,x.E,x.tF?x.F:"",pc(x.E,x.I)]));
+ const T=k=>smA(lin.map(x=>x[k]));t.push(["Total",T("R"),T("D"),pc(T("D"),T("R")),T("B"),T("I"),T("E"),lin.some(x=>x.tF)?T("F"):"",pc(T("E"),T("I"))]);
  if(EC.foco==null||!lin.some(x=>x.ano===EC.foco))EC.foco=(lin.find(x=>x.ano===ST.ano)||lin[lin.length-1]).ano;
- const x=lin.find(l=>l.ano===EC.foco),mm=[["Mês","ISS apurado","ISS estimativa","Apurado - estimativa","Estimativa / apurado %"]];
- ms.forEach(m=>{const i=x.mI[m-1]||0,e=x.mE[m-1]||0;mm.push([MES[m],i,e,e?i-e:"",pc(e,i)]);});mm.push(["Total",x.I,x.E,x.E?x.I-x.E:"",pc(x.E,x.I)]);
+ const x=lin.find(l=>l.ano===EC.foco);ms=ms.filter(m=>x.mR[m-1]!==null);const mm=[["Mês","ISS apurado","ISS-Estimativa","Valor a provisionar","ISS-Estimativa / apurado %"]];
+ ms.forEach(m=>{const i=x.mI[m-1]||0,e=x.mE[m-1]||0;mm.push([MES[m],i,e,x.mF[m-1]===null?"":x.mF[m-1],pc(e,i)]);});mm.push(["Total",x.I,x.E,x.tF?x.F:"",pc(x.E,x.I)]);
  return{t,mm,ano:x.ano};
 }
 function ecAoa(){const e=ecTabs();if(!e)return[];
  return[["Comparativo anos",xlsSheet([["Comparativo entre anos — "+ecPer().per]].concat(e.t),[10,18,18,14,18,16,16,18,14],{intc:[0]})],["Apurado x estimat. "+e.ano,xlsSheet([["Mês a mês "+e.ano]].concat(e.mm),[14,16,16,18,14])]];
 }
-function ecBarras(it,la,lb){
+function ecBarras(it,la,lb,foco){
  if(!it.length)return '<p class="hint">Sem dados no filtro.</p>';
  const W=1000,H=220,pl=78,pr=12,pt=12,pb=24,max=Math.max(...it.map(x=>Math.max(x.a||0,x.b||0)),1),Y=v=>H-pb-(Math.max(v,0)/max)*(H-pt-pb),bw=(W-pl-pr)/it.length;
  let s='<svg viewBox="0 0 '+W+" "+H+'" xmlns="http://www.w3.org/2000/svg" role="img">';
  for(let i=0;i<=4;i++){const v=max*i/4,y=Y(v);s+='<line x1="'+pl+'" y1="'+y+'" x2="'+(W-pr)+'" y2="'+y+'" stroke="var(--line2)"/><text x="'+(pl-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="var(--mut)">'+(max>=2e6?mi(v):fmt(Math.round(v/1000)).replace(/,00$/,'')+' mil')+"</text>";}
  it.forEach((x,i)=>{const X=pl+i*bw,a=x.a||0,b=x.b||0;
-  s+='<g class="mg" data-k="'+x.k+'" style="cursor:pointer"><rect x="'+X+'" y="'+pt+'" width="'+bw+'" height="'+(H-pt-pb)+'" fill="transparent"/>'+
+  s+='<g class="mg" data-k="'+x.k+'" style="cursor:pointer'+(foco!=null&&x.k!==foco?';opacity:.38':"")+'"><rect x="'+X+'" y="'+pt+'" width="'+bw+'" height="'+(H-pt-pb)+'" fill="transparent"/>'+
    '<rect x="'+(X+bw*.16)+'" y="'+Y(a)+'" width="'+bw*.32+'" height="'+(H-pb-Y(a))+'" fill="var(--acc)" rx="1"><title>'+x.t+" · "+la+" "+rs(a)+"</title></rect>"+
-   '<rect x="'+(X+bw*.52)+'" y="'+Y(b)+'" width="'+bw*.32+'" height="'+(H-pb-Y(b))+'" fill="#B1D34B" rx="1"><title>'+x.t+" · "+lb+" "+rs(b)+(b&&a?" · diferença "+rs(a-b):"")+"</title></rect>"+
+   '<rect x="'+(X+bw*.52)+'" y="'+Y(b)+'" width="'+bw*.32+'" height="'+(H-pb-Y(b))+'" fill="var(--est)" rx="1"><title>'+x.t+" · "+lb+" "+rs(b)+(b&&a?" · diferença "+rs(a-b):"")+"</title></rect>"+
    '<text x="'+(X+bw/2)+'" y="'+(H-7)+'" text-anchor="middle" font-size="11" fill="var(--mut)">'+x.t+"</text></g>";});
- return s+'<line x1="'+pl+'" y1="'+(H-pb)+'" x2="'+(W-pr)+'" y2="'+(H-pb)+'" stroke="var(--line)"/></svg><p class="hint" style="margin:4px 0 0"><span style="color:var(--acc)">■</span> '+la+' &nbsp; <span style="color:#B1D34B">■</span> '+lb+"</p>";
+ return s+'<line x1="'+pl+'" y1="'+(H-pb)+'" x2="'+(W-pr)+'" y2="'+(H-pb)+'" stroke="var(--line)"/></svg><p class="hint" style="margin:4px 0 0"><span style="color:var(--acc)">■</span> '+la+' &nbsp; <span style="color:var(--est)">■</span> '+lb+(foco!=null?' &nbsp; · em destaque: <b>'+(it.find(x=>x.k===foco)||{}).t+"</b>":"")+"</p>";
 }
 function grafico(ms){
  if(!ms.length)return '<p class="hint">Carregue os arquivos para ver o gráfico.</p>';
@@ -1366,15 +1463,15 @@ function camada(m0,quieto){
  if(!quieto)$("#cam2").scrollIntoView({block:"nearest"});
 }
 function evolucao(ms){
- let h='<thead><tr><th>Mês</th><th>Receitas</th><th>Despesas</th><th>Sinistralidade</th><th>Base</th><th>ISSQN</th><th>ISS estimativa</th><th>Apurado − estimativa</th><th>Variação da base</th></tr></thead><tbody>';
+ let h='<thead><tr><th>Mês</th><th>Receitas</th><th>Despesas</th><th>Sinistralidade</th><th>Base</th><th>ISSQN</th><th>ISS-Estimativa</th><th>Valor a provisionar</th><th>Variação da base</th></tr></thead><tbody>';
  let ant=null;
  ms.forEach(m=>{
   const r=recM(m),d=despM(m),b=r-d,vr=ant===null||!ant?null:(b-ant)/Math.abs(ant)*100;
-  h+="<tr><td>"+MES[m]+"</td><td>"+fmt(r)+"</td><td>"+fmt(d)+"</td><td>"+fmt(r?d/r*100:0)+"%</td><td>"+fmt(b)+"</td><td>"+fmt(impM(m))+"</td><td>"+(estM(m)?fmt(estM(m)):"–")+"</td><td>"+(estM(m)?fmt(impM(m)-estM(m)):"–")+"</td><td style='color:"+(vr===null?"var(--mut)":(vr<0?"var(--desp)":"var(--acc)"))+"'>"+(vr===null?"–":(vr>0?"+":"")+fmt(vr)+"%")+"</td></tr>";
+  h+="<tr><td>"+MES[m]+"</td><td>"+fmt(r)+"</td><td>"+fmt(d)+"</td><td>"+fmt(r?d/r*100:0)+"%</td><td>"+fmt(b)+"</td><td>"+fmt(impM(m))+"</td><td>"+(estM(m)?fmt(estM(m)):"–")+"</td><td>"+(difX(impM(m),estM(m),movM(m))!==null?fmt(difM(m)):"–")+"</td><td style='color:"+(vr===null?"var(--mut)":(vr<0?"var(--desp)":"var(--acc)"))+"'>"+(vr===null?"–":(vr>0?"+":"")+fmt(vr)+"%")+"</td></tr>";
   ant=b;
  });
  const R=somaAno(recM),D=somaAno(despM);
- h+='</tbody><tfoot><tr class="tt"><td><b>Acumulado</b></td><td><b>'+fmt(R)+"</b></td><td><b>"+fmt(D)+"</b></td><td><b>"+fmt(R?D/R*100:0)+"%</b></td><td><b>"+fmt(R-D)+"</b></td><td><b>"+fmt(somaAno(impM))+"</b></td><td><b>"+fmt(somaAno(estM))+"</b></td><td><b>"+(somaAno(estM)?fmt(somaAno(impM)-somaAno(estM)):"–")+"</b></td><td></td></tr></tfoot>";
+ h+='</tbody><tfoot><tr class="tt"><td><b>Acumulado</b></td><td><b>'+fmt(R)+"</b></td><td><b>"+fmt(D)+"</b></td><td><b>"+fmt(R?D/R*100:0)+"%</b></td><td><b>"+fmt(R-D)+"</b></td><td><b>"+fmt(somaAno(impM))+"</b></td><td><b>"+fmt(somaAno(estM))+"</b></td><td><b>"+(somaAno(difM)?fmt(somaAno(difM)):"–")+"</b></td><td></td></tr></tfoot>";
  $("#evo").innerHTML=h;
 }
 
@@ -1385,18 +1482,35 @@ let TB=Object.assign({},TB_PAD);
 try{Object.assign(TB,JSON.parse(localStorage.getItem("issqn.timbre")||"{}"));}catch(e){}if(!TB.logo)TB.logo=LOGO_FIXA;
 const tbSalvar=()=>{try{localStorage.setItem("issqn.timbre",JSON.stringify(TB));}catch(e){}};
 const contMesSel=()=>pegaM($("#contMes"));
+/* assinaturas fixas do relatório contábil (esquerda / direita de quem lê) */
+const ASSIN=[{n:"Elcida Helga Maier",l:["CPF: 332.298.059-68","CRC/MT CT 5061/O-1"]},{n:"Dr. Ricardo Antonio Gonsales",l:["CPF: 022.746.439-70","CRM/MT 5520","Diretor Presidente"]}];
+function assinLer(){try{const a=JSON.parse(localStorage.getItem("issqn.contabil.assin2")||"null");if(Array.isArray(a)&&a.length===2&&a.every(x=>x&&x.n))return a;}catch(e){}return ASSIN;}
+function assinTxt(a){return[a.n].concat(a.l).join("\n");}
+function assinGravar(){const a=[1,2].map(i=>{const ls=txtCE($("#contAs"+i)).split("\n").map(x=>x.trim()).filter(Boolean);return{n:ls[0]||"",l:ls.slice(1)};});
+ try{if(a.every((x,i)=>assinTxt(x)===assinTxt(ASSIN[i]))||a.some(x=>!x.n))localStorage.removeItem("issqn.contabil.assin2");else localStorage.setItem("issqn.contabil.assin2",JSON.stringify(a));}catch(e){}}
+const LOCAL_DOC="Tangará da Serra - MT";
+const dataExtenso=(d=new Date())=>d.getDate()+" de "+MES[d.getMonth()+1].toLowerCase()+" de "+d.getFullYear();
+const localData=()=>LOCAL_DOC+", "+dataExtenso()+".";
 const contKey=m=>"issqn.contabil."+ST.ano+(m?"."+(Array.isArray(m)?m.join("-"):m):"");
 const txtCE=el=>el.innerText.replace(/ /g," ").replace(/\n{3,}/g,"\n\n").trim();
 function contLer(m){
- let d={};try{d=JSON.parse(localStorage.getItem(contKey(m))||"{}");}catch(e){}
- let a={};try{a=JSON.parse(localStorage.getItem("issqn.contabil.assin")||"{}");}catch(e){}
- return{notas:d.notas||"",resp:a.resp||d.resp||"",cargo:a.cargo||d.cargo||"",local:a.local||""};
+ let d={};try{const k=contKey(m),raw=localStorage.getItem(k);
+  if(raw)d=JSON.parse(raw)||{};
+  else{const u=localStorage.getItem("issqn.contabil.ultimo");if(u){d=JSON.parse(u)||{};localStorage.setItem(k,u);}} /* competência nova herda as últimas notas e já fica salva */
+ }catch(e){}
+ let nh=d.nh!=null?d.nh:txtParaHTML(d.notas||""),notas=d.notas||"";
+ if(/Esta nota esclarece os valores constantes/i.test(notas)){ /* o texto padrão agora é fixo (bloco acima): tira a cópia digitada nas notas */
+  const t=document.createElement("div");t.innerHTML=nh;const ch=[...t.childNodes];let corta=-1;
+  ch.forEach((n,i)=>{if(corta<0&&/sobre a base de c[aá]lculo/i.test(n.textContent||""))corta=i;});
+  if(corta>=0){ch.slice(0,corta+1).forEach(n=>n.remove());while(t.firstChild&&!(t.firstChild.textContent||"").trim()&&!(t.firstChild.querySelector&&t.firstChild.querySelector("table")))t.firstChild.remove();
+   nh=t.innerHTML;const tmp=document.createElement("div");tmp.style.cssText="position:absolute;left:-9999px";tmp.innerHTML=nh;document.body.appendChild(tmp);notas=tmp.innerText.trim();tmp.remove();
+   try{const v=JSON.stringify({notas,nh});localStorage.setItem(contKey(m),v);}catch(e){}}}
+ return{notas,nh};
 }
 function contSalvar(){
  const m=contMesSel();
  try{
-  localStorage.setItem(contKey(m),JSON.stringify({notas:txtCE($("#contNotas"))}));
-  localStorage.setItem("issqn.contabil.assin",JSON.stringify({resp:txtCE($("#contResp")),cargo:txtCE($("#contCargo")),local:txtCE($("#contLocal"))}));
+  const ed=$("#contNotas"),v=JSON.stringify({notas:txtCE(ed),nh:limpaHTML(ed.innerHTML)});localStorage.setItem(contKey(m),v);localStorage.setItem("issqn.contabil.ultimo",v);
  }catch(e){}
 }
 function docDados(m){
@@ -1411,6 +1525,81 @@ function docDados(m){
 function docLogo(){
  $("#docLogo").innerHTML=TB.logo?'<img alt="Logomarca" src="'+TB.logo+'">':"";$("#doc .lh").classList.toggle("sl",!TB.logo);$("#bLogo").textContent=TB.logo?"Trocar logomarca":"Inserir logomarca";
 }
+/* ---------- editor (padrão Word) das notas ---------- */
+const W_TAGS=new Set(["P","DIV","BR","B","STRONG","I","EM","U","S","STRIKE","DEL","SPAN","FONT","UL","OL","LI","TABLE","THEAD","TBODY","TFOOT","TR","TD","TH","H1","H2","H3","H4","H5","H6","BLOCKQUOTE","SUB","SUP","HR","CAPTION"]);
+const W_DROP=new Set(["SCRIPT","STYLE","META","LINK","TITLE","XML","HEAD","IMG","SVG","OBJECT","IFRAME","INPUT","BUTTON","SELECT","TEXTAREA","COLGROUP","COL"]);
+const W_CSS=["font-weight","font-style","text-decoration","text-decoration-line","color","background-color","text-align","font-size","font-family","margin-left","padding-left","vertical-align"];
+function limpaHTML(html,colar){
+ const t=document.createElement("template");t.innerHTML=String(html||"").replace(/<!--[\s\S]*?-->/g,"").replace(/<\/?o:p>/gi,"");
+ const walk=n=>{[...n.childNodes].forEach(c=>{
+  if(c.nodeType===8){c.remove();return;}
+  if(c.nodeType!==1)return;
+  const tg=c.tagName.toUpperCase();
+  if(W_DROP.has(tg)||tg.includes(":")){c.remove();return;}
+  walk(c);
+  if(!W_TAGS.has(tg)){c.replaceWith(...c.childNodes);return;}
+  let st="";
+  if(c.style)for(const k of W_CSS){let v=c.style.getPropertyValue(k);if(!v)continue;if(colar&&(k==="font-family"||k==="font-size"))continue;if(k==="background-color"&&/transparent|initial|windowtext/i.test(v))continue;if(/^mso|windowtext/i.test(v))continue;st+=k+":"+v+";";}
+  if(c.style&&!c.style.getPropertyValue("background-color")){const bg=c.style.getPropertyValue("background");const mm=bg&&bg.match(/#[0-9a-f]{3,6}|rgba?\([^)]*\)/i);if(mm)st+="background-color:"+mm[0]+";";}
+  if(tg==="FONT"){const sp=document.createElement("span");if(c.getAttribute("color"))st+="color:"+c.getAttribute("color")+";";if(c.getAttribute("face")&&!colar)st+="font-family:"+c.getAttribute("face")+";";sp.append(...c.childNodes);if(st)sp.setAttribute("style",st);c.replaceWith(sp);return;}
+  const al=c.getAttribute("align"),cs=c.getAttribute("colspan"),rs_=c.getAttribute("rowspan"),dv=c.getAttribute("data-v");
+  [...c.attributes].forEach(a=>c.removeAttribute(a.name));
+  if(al&&!/text-align/.test(st))st+="text-align:"+al+";";
+  if(st)c.setAttribute("style",st);if(cs&&cs!=="1")c.setAttribute("colspan",cs);if(rs_&&rs_!=="1")c.setAttribute("rowspan",rs_);
+  if(tg==="SPAN"&&dv&&!colar&&/^(per|R|D|B|I|A|E|P|ano)$/.test(dv)){c.setAttribute("data-v",dv);c.setAttribute("contenteditable","false");return;}
+  if(tg==="SPAN"&&!st){c.replaceWith(...c.childNodes);}
+ });};
+ walk(t.content);
+ const d=document.createElement("div");d.append(t.content.cloneNode(true));return d.innerHTML.trim();
+}
+const txtParaHTML=t=>String(t||"").split("\n").map(l=>"<div>"+(l?esc(l):"<br>")+"</div>").join("");
+let W_ED=null;const WE=()=>W_ED||$("#contNotas");
+const wSalva=()=>{if(WE().id==="contFixo")fixoSalvar();else contSalvar();};
+function wCmd(c,v){const ed=WE();if(document.activeElement!==ed&&!ed.contains(document.getSelection().anchorNode))ed.focus();document.execCommand("styleWithCSS",false,true);document.execCommand(c,false,v==null?null:v);wSalva();}
+function wInsHTML(h){wCmd("insertHTML",h);}
+let W_PT=11;
+function wNorm(){const ed=WE();
+ ed.querySelectorAll('font[size="7"]').forEach(f=>{const sp=document.createElement("span");if(W_PT)sp.style.fontSize=W_PT+"pt";sp.append(...f.childNodes);f.replaceWith(sp);});
+ ed.querySelectorAll("span").forEach(x=>{if(/xxx-large/.test(x.style.fontSize))x.style.fontSize=W_PT?W_PT+"pt":"";});}
+function wTam(pt_){W_PT=+pt_;wCmd("fontSize","7");wNorm();wSalva();}
+/* valores automáticos no texto: <span data-v="R">…</span> recebe o valor da competência selecionada */
+const FIXO_PADRAO='<div>Esta nota esclarece os valores constantes na apuração do ISSQN, item 1 do recibo, para fins de conferência pela administração pública municipal.</div><div><br></div>'+
+ '<div><b>1. Total de receitas – <span data-v="R" contenteditable="false"></span></b></div><div>Corresponde aos faturamentos da Unimed Vale do Sepotuba, apurados com base nas notas fiscais emitidas aos beneficiários no período.</div><div><br></div>'+
+ '<div><b>2. Total de despesas – <span data-v="D" contenteditable="false"></span></b></div><div>Representa os custos assistenciais efetivamente desembolsados para dar cobertura assistencial aos beneficiários da Unimed Vale do Sepotuba.</div><div><br></div>'+
+ '<div><b>3. Base de cálculo do ISS – <span data-v="B" contenteditable="false"></span></b></div><div>Resulta da diferença entre o total de receitas e o total de despesas (<span data-v="R" contenteditable="false"></span> − <span data-v="D" contenteditable="false"></span>).</div><div><br></div>'+
+ '<div><b>4. Valor do ISS apurado – <span data-v="I" contenteditable="false"></span></b></div><div>Resulta da aplicação da alíquota de <span data-v="A" contenteditable="false"></span> sobre a base de cálculo de <span data-v="B" contenteditable="false"></span>.</div>';
+function fixoLer(){try{const v=localStorage.getItem("issqn.contabil.fixo");if(v!=null)return v;}catch(e){}return FIXO_PADRAO;}
+function fixoSalvar(){try{const h=limpaHTML($("#contFixo").innerHTML);if(!$("#contFixo").innerText.trim())localStorage.removeItem("issqn.contabil.fixo");else localStorage.setItem("issqn.contabil.fixo",h);}catch(e){}}
+function contVars(m){const d=docDados(m);return{per:d.per,R:rs(d.R),D:rs(d.D),B:rs(d.B),I:rs(d.I),A:fmt(ST.aliq)+"%",E:rs(somaM(estM,m)),P:rs(somaM(difM,m)),ano:String(ST.ano)};}
+function preencheVars(root,V){root.querySelectorAll("[data-v]").forEach(x=>{const v=V[x.dataset.v];if(v!=null&&x.textContent!==v)x.textContent=v;});}
+function preencheHTML(html,V){const t=document.createElement("div");t.innerHTML=html||"";preencheVars(t,V);return t.innerHTML;}
+function wIni(){
+ const tb=$("#wtb"),EDS=[$("#contFixo"),$("#contNotas")];EDS.forEach(x=>x.addEventListener("focus",()=>{W_ED=x;}));
+ let sel=null;const guarda=()=>{const s=document.getSelection();if(!s.rangeCount)return;const q=EDS.find(x=>x.contains(s.anchorNode));if(q){W_ED=q;sel=s.getRangeAt(0).cloneRange();}};
+ const volta=()=>{if(!sel)return;WE().focus();const s=document.getSelection();s.removeAllRanges();s.addRange(sel);};
+ document.addEventListener("selectionchange",guarda);
+ tb.addEventListener("mousedown",e=>{guarda();if(e.target.closest("button"))e.preventDefault();},true);tb.addEventListener("focusin",guarda,true);EDS.forEach(x=>{x.addEventListener("keyup",guarda);x.addEventListener("mouseup",guarda);});
+ tb.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{volta();wCmd(b.dataset.c);});
+ $("#wFont").onchange=e=>{const v=e.target.value;e.target.value="";if(!v)return;volta();
+  if(v==="doc"){wCmd("fontName","__doc__");WE().querySelectorAll("font[face='__doc__']").forEach(f=>f.replaceWith(...f.childNodes));WE().querySelectorAll("span").forEach(x=>{if(/__doc__/.test(x.style.fontFamily)){x.style.fontFamily="";if(!x.getAttribute("style"))x.replaceWith(...x.childNodes);}});WE().querySelectorAll("[style*='font-family']").forEach(x=>{if(document.getSelection().containsNode(x,true))x.style.fontFamily="";});wSalva();}
+  else wCmd("fontName",v);};
+ $("#wTam").onchange=e=>{const v=e.target.value;e.target.value="";if(!v)return;volta();
+  if(v==="doc"){W_PT=0;wCmd("fontSize","7");wNorm();WE().querySelectorAll("[style*='font-size']").forEach(x=>{if(document.getSelection().containsNode(x,true))x.style.fontSize="";});WE().querySelectorAll("span:not([style]),span[style='']").forEach(x=>x.replaceWith(...x.childNodes));wSalva();}
+  else wTam(v);};
+ $("#wVar").onchange=e=>{const v=e.target.value;e.target.value="";if(!v)return;volta();const V=contVars(contMesSel());
+  const sl=document.getSelection();if(!sl.rangeCount||!WE().contains(sl.anchorNode)){WE().focus();const r0=document.createRange();r0.selectNodeContents(ed);r0.collapse(false);sl.removeAllRanges();sl.addRange(r0);}
+  const r=sl.getRangeAt(0);r.deleteContents();const sp=document.createElement("span");sp.dataset.v=v;sp.contentEditable="false";sp.textContent=V[v];const tx=document.createTextNode("\u00a0");
+  r.insertNode(tx);r.insertNode(sp);r.setStartAfter(tx);r.collapse(true);sl.removeAllRanges();sl.addRange(r);guarda();wSalva();};
+ $("#wEst").onchange=e=>{const v=e.target.value;e.target.value="";if(v){volta();wCmd("formatBlock","<"+v+">");}};
+ $("#wCor").oninput=e=>{tb.querySelector(".wcor").style.borderBottomColor=e.target.value;volta();wCmd("foreColor",e.target.value);};
+ $("#wRea").oninput=e=>{tb.querySelector(".wrc").style.borderBottomColor=e.target.value;volta();wCmd("hiliteColor",e.target.value);};
+ tb.querySelector('[data-x="tab"]').onclick=()=>{const r=prompt("Tabela: linhas x colunas (ex.: 3x4)","3x3");if(!r)return;const m=r.match(/(\d+)\D+(\d+)/);if(!m)return;const nl=Math.min(+m[1],60),nc=Math.min(+m[2],12);
+  volta();wInsHTML("<table>"+Array.from({length:nl},(x,i)=>"<tr>"+Array.from({length:nc},()=>i?"<td><br></td>":"<td style=\"font-weight:bold;background-color:#eeeeee\"><br></td>").join("")+"</tr>").join("")+"</table><div><br></div>");};
+ tb.querySelector('[data-x="colar"]').onclick=async()=>{volta();try{const it=await navigator.clipboard.read();for(const x of it){if(x.types.includes("text/html")){wInsHTML(limpaHTML(await (await x.getType("text/html")).text(),1));return;}if(x.types.includes("text/plain")){wCmd("insertText",await (await x.getType("text/plain")).text());return;}}}catch(e){alert("O navegador não liberou a área de transferência para o botão. Use Ctrl+V dentro das notas — o resultado é o mesmo.");}};
+ tb.querySelector('[data-x="colarT"]').onclick=async()=>{volta();try{wCmd("insertText",await navigator.clipboard.readText());}catch(e){alert("O navegador não liberou a área de transferência para o botão. Use Ctrl+Shift+V dentro das notas.");}};
+ EDS.forEach(ed=>ed.addEventListener("paste",e=>{const cd=e.clipboardData;if(!cd)return;const h=cd.getData("text/html");if(h){e.preventDefault();wInsHTML(limpaHTML(h,1));}}));
+ EDS.forEach(ed=>ed.addEventListener("keydown",e=>{if(e.key==="Tab"){e.preventDefault();wCmd(e.shiftKey?"outdent":"indent");}}));
+}
 function contabil(){
  const sel=$("#contMes");sel._sel=(sel._sel||[]).filter(x=>x>=1&&x<=12);mesPicker(sel,contabil);
  const m=pegaM(sel),d=docDados(m),hoje=new Date().toLocaleDateString("pt-BR");
@@ -1423,8 +1612,10 @@ function contabil(){
   '<tr class="bs"><td>Base de cálculo do ISS (receitas − despesas)</td><td class="v">'+rs(d.B)+"</td></tr>"+
   '<tr class="im"><td>Valor do ISS apurado — alíquota '+fmt(ST.aliq)+"%"+(mUnico(m)?"":" (soma das apurações mensais)")+'</td><td class="v">'+rs(d.I)+"</td></tr></tbody>";
  const c=contLer(m);
- [["#contNotas",c.notas],["#contResp",c.resp],["#contCargo",c.cargo],["#contLocal",c.local]].forEach(([s,v])=>{if(document.activeElement!==$(s))$(s).innerText=v;});
- $("#contData").textContent=hoje;
+ {const ed=$("#contNotas"),V=contVars(m);if(document.activeElement!==ed&&ed.innerHTML!==c.nh)ed.innerHTML=c.nh;preencheVars(ed,V);
+  const fx=$("#contFixo"),fh=fixoLer();if(document.activeElement!==fx&&fx.dataset.h!==fh){fx.innerHTML=fh;fx.dataset.h=fh;}preencheVars(fx,V);}
+ $("#contLD").textContent=localData();
+ assinLer().forEach((a,i)=>{const el=$("#contAs"+(i+1));if(document.activeElement!==el)el.innerText=assinTxt(a);});
  $("#docFt1").textContent=(TB.t1||"Unimed Vale do Sepotuba")+" · Relatório de Apuração do ISSQN";
  $("#docFt2").textContent="Emitido em "+hoje;
 }
@@ -1547,20 +1738,40 @@ function matriz(){
  bloco("D");
  total("Total de despesas",despM,"td_","D");
  total("Base de cálculo do ISSQN",baseM,"base");
- {const r=document.createElement("tr");r.className="est";const td=document.createElement("td");td.textContent="ISS pago por estimativa (comparativo)";td.title="Só para comparação — não é deduzido de nenhum valor da apuração. Clique no mês para informar o valor pago";r.appendChild(td);
+ {const r=document.createElement("tr");r.className="est";const td=document.createElement("td");td.textContent="ISS-Estimativa";td.title="Só para comparação — não é deduzido de nenhum valor da apuração. Clique no mês para informar o valor pago";r.appendChild(td);
   const est=estLer(),ed=true;
   {let lim=false;for(let m=1;m<=12;m++)if(typeof est[m]==="number"&&estArqM(m)){delete est[m];lim=true;}if(lim)try{localStorage.setItem(estKey(),JSON.stringify(est));}catch(e){}}
   for(const m of MZ()){const c=document.createElement("td"),pl=estArqM(m),man=!pl&&typeof est[m]==="number",v=pl||(man?est[m]:0);c.textContent=v?fmt(v):"–";if(!v)c.classList.add("zero");if(man)c.classList.add("eman");
-   if(ed){c.classList.add("ein");c.dataset.em=m;c.title=pl?"Valor da planilha "+estSrc(m)+" — para alterar, corrija a planilha":(man?"Valor digitado":"")+" — clique para informar o ISS pago por estimativa em "+MES[m];c.onclick=()=>{if(c.querySelector("input"))return;if(pl){alert("O ISS pago por estimativa de "+MES[m]+"/"+ST.ano+" vem da planilha “"+estSrc(m)+"”. Para alterar, corrija a planilha e atualize a pasta.");return;}if(!pode("ajuste")){alert("Seu usuário não tem permissão para informar o ISS pago por estimativa (módulo “Ajustes manuais e calibragem”). Peça ao administrador.");return;}const i=document.createElement("input");i.inputMode="decimal";i.value=v?fmt(v):"";c.textContent="";c.appendChild(i);i.focus();i.select();
+   if(ed){c.classList.add("ein");c.dataset.em=m;c.title=pl?"Valor da planilha "+estSrc(m)+" — para alterar, corrija a planilha":(man?"Valor digitado":"")+" — clique para informar o ISS-Estimativa em "+MES[m];c.onclick=()=>{if(c.querySelector("input"))return;if(pl){alert("O ISS-Estimativa de "+MES[m]+"/"+ST.ano+" vem da planilha “"+estSrc(m)+"”. Para alterar, corrija a planilha e atualize a pasta.");return;}if(!pode("ajuste")){alert("Seu usuário não tem permissão para informar o ISS-Estimativa (módulo “Ajustes manuais e calibragem”). Peça ao administrador.");return;}const i=document.createElement("input");i.inputMode="decimal";i.value=v?fmt(v):"";c.textContent="";c.appendChild(i);i.focus();i.select();
      let feito=false;const fim=ok=>{if(feito)return;feito=true;if(ok){const o=estLer(),t=i.value.trim();if(t==="")delete o[m];else o[m]=parseVal(t);estGravar(o);}matriz();};
      i.onkeydown=e=>{if(e.key==="Enter")fim(true);if(e.key==="Escape")fim(false);if(e.key==="Tab"){e.preventDefault();fim(true);const ms=MZ(),nm=ms[ms.indexOf(m)+(e.shiftKey?-1:1)],nx=nm&&$('#mtz tr.est td[data-em="'+nm+'"]');if(nx)nx.click();}};i.onblur=()=>fim(true);};}
    r.appendChild(c);}
   const tt=document.createElement("td");tt.textContent=fmt(sMZ(estM));tt.style.fontWeight="600";r.appendChild(tt);tb.appendChild(r);}
  total("Imposto devido ("+fmt(ST.aliq)+"%)",impM,"imp");
- if(sMZ(estM)){const r=document.createElement("tr");r.className="dif";const td=document.createElement("td");td.textContent="Comparativo: apurado − estimativa";td.title="Só para comparação: diferença entre o imposto apurado e o ISS pago por estimativa. Não altera a apuração.";r.appendChild(td);
-  for(const m of [...MZ(),0]){const v=m?difM(m):sMZ(difM),c=document.createElement("td");c.textContent=Math.abs(v)<0.005?"–":fmt(v);c.className=Math.abs(v)<0.005?"zero":"";r.appendChild(c);}tb.appendChild(r);}
+ if(sMZ(estM)){const r=document.createElement("tr");r.className="dif";const td=document.createElement("td");td.textContent="Valor a provisionar";td.title="Só para comparação: diferença entre o imposto apurado e o ISS-Estimativa. Não altera a apuração.";r.appendChild(td);
+  for(const m of [...MZ(),0]){const v=m?difM(m):sMZ(difM),c=document.createElement("td");c.textContent=Math.abs(v)<0.005?"–":fmt(v);c.className=Math.abs(v)<0.005?"zero":v>0?"pv":"nv";c.title=v>0.005?"A pagar: o apurado supera a estimativa":v<-0.005?"A favor: a estimativa paga supera o apurado":"";r.appendChild(c);}tb.appendChild(r);}
  t.appendChild(tb);
  t.querySelectorAll("td.ed").forEach(td=>td.onclick=()=>drill(td.dataset.k,+td.dataset.m));
+ historia();
+}
+/* storytelling: a conta do imposto contada em sequência, com a frase-resumo do período */
+function historia(){
+ const el=$("#story");if(!el)return;const ms=MZ();
+ const R_=sMZ(recM),D=sMZ(despM),B=sMZ(baseM),I=sMZ(impM),E=sMZ(estM),P=sMZ(difM);
+ if(!R_&&!D){el.innerHTML="";$("#storyK").innerHTML="";return;}
+ const per=MZf()?(ms.every((x,i)=>!i||x===ms[i-1]+1)?(ms.length>1?ABR[ms[0]]+" a "+ABR[ms[ms.length-1]]:MES[ms[0]])+"/"+ST.ano:ms.map(x=>ABR[x]).join(", ")+"/"+ST.ano):ST.ano+" (consolidado)";
+ const neg=ms.filter(m=>baseM(m)<0&&movM(m)).length,mov=ms.filter(movM).length;
+ const pc=(a,b)=>b?fmt(a/b*100).replace(/,00$/,"")+"%":"–";
+ let f="Em <b>"+per+"</b>, as receitas somaram <b>"+rs(R_)+"</b> e as despesas assistenciais consumiram <b>"+pc(D,R_)+"</b> delas. ";
+ f+=B>0?"Sobrou uma base de cálculo de <b>"+rs(B)+"</b>, que gerou <b>"+rs(I)+"</b> de ISS ("+fmt(ST.aliq)+"%). ":"A base de cálculo ficou <b>negativa ("+rs(B)+")</b>; por isso não há ISS no período. ";
+ if(neg)f+="Em <b>"+neg+(neg>1?" meses":" mês")+"</b> a despesa superou a receita e o imposto foi zero. ";
+ if(E)f+=P>0.005?"Foram pagos <b>"+rs(E)+"</b> por estimativa; <b style=\"color:var(--pv)\">faltam "+rs(P)+" a provisionar</b>.":P<-0.005?"A estimativa paga (<b>"+rs(E)+"</b>) <b style=\"color:var(--nv)\">supera o apurado em "+rs(-P)+"</b>.":"A estimativa paga cobre exatamente o apurado.";
+ else f+="Não há ISS-Estimativa informada para o período.";
+ const k=(c,t,v,sub)=>'<div class="k '+c+'"><span>'+t+"</span><b>"+v+"</b>"+(sub?"<i>"+sub+"</i>":"")+"</div>";
+ let h='<div class="flx">'+k("r","Receitas",rs(R_),mov+(mov>1?" meses com movimento":" mês com movimento"))+'<span class="op">−</span>'+k("d","Despesas",rs(D),pc(D,R_)+" das receitas")+'<span class="op">=</span>'+k("b","Base de cálculo",rs(B),pc(B,R_)+" das receitas")+'<span class="op">×</span>'+k("i","ISS apurado ("+fmt(ST.aliq)+"%)",rs(I),"imposto do período");
+ if(E)h+='<span class="sep"></span>'+k("e","ISS-Estimativa",rs(E),"já pago por estimativa")+'<span class="op">→</span>'+k(P>0.005?"p":"n","Valor a provisionar",rs(P),P>0.005?"a pagar":P<-0.005?"a favor da Unimed":"sem diferença");
+ $("#storyK").innerHTML=h+"</div>";
+ el.innerHTML='<p class="hl">'+f+"</p>";
 }
 function detalhe(){
  const sel=$("#mes"),ms=ativos();
@@ -1597,9 +1808,9 @@ function renderCfg(){
   const tr=document.createElement("tr");
   tr.innerHTML='<td><input data-f="lb" value="'+l.lb.replace(/"/g,"&quot;")+'"><select data-f="g" style="width:100%;margin-top:2px"><option value="R"'+(l.g==="R"?" selected":"")+">Receita</option><option value=\"D\""+(l.g==="D"?" selected":"")+">Despesa</option></select>"+'<input data-f="sg" list="sgDl" value="'+(l.sg||"").replace(/"/g,"&quot;")+'" placeholder="subgrupo (opcional)" title="Linhas com o mesmo subgrupo aparecem agrupadas e abrem com um clique" style="margin-top:2px"><input data-f="ds" value="'+(l.ds||"").replace(/"/g,"&quot;")+'" placeholder="nomenclatura (dica do mouse)" title="Texto mostrado ao parar o mouse sobre o nome da linha" style="margin-top:2px">'+"<span class=\"cnt\" data-cnt=\""+l.k+"\"></span></td>"+
    '<td><input data-f="arq" value="'+(l.arq||"").replace(/"/g,"&quot;")+'" placeholder="trecho do nome"></td>'+
-   '<td><input class="c" data-f="cm" value="'+(l.cm||"")+'"></td>'+
+   '<td><input class="c" data-f="cm" value="'+(l.cm||"")+'"><input class="c" data-f="ca" value="'+(l.ca||"")+'" placeholder="ano" title="Opcional: coluna que define o ANO do lançamento (ex.: A = COMPETENCIA). O mês continua vindo da coluna acima." style="margin-top:2px"></td>'+
    '<td><input class="c" data-f="cv" value="'+(l.cv||"")+'"></td>'+
-   '<td><input class="c" data-f="cf" value="'+(l.cf||"")+'" placeholder="col"><input data-f="fv" value="'+(l.fv||"").replace(/"/g,"&quot;")+'" placeholder="contém" style="margin-top:2px"></td>'+
+   '<td><input class="c" data-f="cf" value="'+(l.cf||"")+'" placeholder="col"><input data-f="fv" value="'+(l.fv||"").replace(/"/g,"&quot;")+'" placeholder="contém" style="margin-top:2px"><input data-f="ch" value="'+(l.ch||"").replace(/"/g,"&quot;")+'" placeholder="chave (opcional)" title="Colunas que identificam o lançamento (ex.: DOCUMENTO,CONTRATO). Se o mesmo lançamento aparecer em mais de um arquivo, conta uma vez só — vale o arquivo mais recente." style="margin-top:2px"></td>'+
    '<td><button data-del="'+i+'" title="Excluir linha" style="padding:1px 5px">✕</button></td>';
   tr.querySelectorAll("[data-f]").forEach(el=>el.onchange=()=>{ST.linhas[i][el.dataset.f]=el.value.trim();salvar();if(el.dataset.f==="sg")renderCfg();renderArquivos();recalcular();});
   tr.querySelector("[data-del]").onclick=()=>{ST.linhas.splice(i,1);salvar();renderCfg();renderArquivos();recalcular();};
@@ -1815,7 +2026,7 @@ function xlsSalvar(nome,abas){const wb=XLSX.utils.book_new();abas.forEach(([n,ws
 const timbreAoa=t=>[[TB.t1||"UNIMED VALE DO SEPOTUBA"]].concat(TB.t2?[[TB.t2]]:[],TB.t3?[[TB.t3]]:[],[[],[t],["Emitido em "+new Date().toLocaleString("pt-BR")],[]]);
 
 /* ---------- PDF no padrão Unimed Vale do Sepotuba ---------- */
-const U1=[0,153,93],U2=[10,95,85],U3=[177,211,75],UR=[14,90,167],UD=[176,32,32],UH=[255,232,107],UK=[42,35,0];
+const U1=[0,153,93],U2=[10,95,85],U3=[177,211,75],UR=[0,127,78],UD=[194,84,0],UH=[255,203,8],UK=[42,32,0],UE=[91,42,134],UEB=[241,235,247],UP=[192,18,74];
 const pt=s=>String(s==null?"":s).replace(/[—–−]/g,"-").replace(/×/g,"x").replace(/…/g,"...").replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/[→▸▴▾]/g,"").replace(/≥/g,">=").replace(/≤/g,"<=");
 function pdfNovo(tit,sub,land,mono){
  if(!window.jspdf||!window.jspdf.jsPDF){alert("A biblioteca de PDF não carregou. Verifique a conexão e recarregue a página.");return null;}
@@ -1832,9 +2043,9 @@ function pdfTimbre(d){
   let ok=false;
   if(TB.logo){try{const pr=d.getImageProperties(TB.logo);let h=14,w=pr.width/pr.height*h;if(w>90){w=90;h=w*pr.height/pr.width;}d.addImage(TB.logo,/png/i.test(TB.logo.slice(0,30))?"PNG":"JPEG",12,8+(14-h)/2,w,h);ok=true;}catch(e){}}
   const x=ok?W-12:W/2,al=ok?"right":"center";
-  d.setFont("helvetica","bold");d.setFontSize(ok?8.5:10);if(mo)d.setTextColor(0);else d.setTextColor(...U1);d.text(pt(TB.t1||""),x,12.5,{align:al});
+  d.setFont("helvetica","bold");d.setFontSize(ok?8.5:10);if(mo)d.setTextColor(0);else d.setTextColor(...U1);if(!mo)d.text(pt(TB.t1||""),x,12.5,{align:al});
   d.setFont("helvetica","normal");d.setFontSize(7.2);d.setTextColor(mo?40:90);
-  if(TB.t2)d.text(pt(TB.t2),x,16.5,{align:al});if(TB.t3)d.text(pt(TB.t3),x,20.3,{align:al});
+  if(!mo){if(TB.t2)d.text(pt(TB.t2),x,16.5,{align:al});if(TB.t3)d.text(pt(TB.t3),x,20.3,{align:al});}
   if(mo){}
   else{d.setDrawColor(...U1);d.setLineWidth(.8);d.line(12,24.5,W-12,24.5);d.setDrawColor(...U3);d.setLineWidth(.3);d.line(12,25.9,W-12,25.9);d.line(12,H-11,W-12,H-11);}
   d.setFontSize(6.8);d.setTextColor(mo?40:110);
@@ -1850,6 +2061,77 @@ function pdfP(d,txt,o){
  d._y+=3.2;
  for(const ln of d.splitTextToSize(pt(txt||"—"),d._W-28)){pdfEspaco(d,5);d.text(ln,d._mono?12:14,d._y);d._y+=3.7;}
  d._y+=2.5;
+}
+/* texto formatado (notas) → PDF: negrito, itálico, sublinhado, tachado, cor, realce, tamanho, fonte, alinhamento, listas, recuo, tabelas */
+function pdfRich(d,html){
+ const X0=d._mono?12:14,XW=d._W-(d._mono?24:28),K=0.82,BASE=11;
+ const t=document.createElement("div");t.innerHTML=html||"";
+ const cor=v=>{if(!v)return null;const e=document.createElement("i");e.style.color=v;document.body.appendChild(e);const c=getComputedStyle(e).color;e.remove();const m=c.match(/\d+(\.\d+)?/g);if(!m)return null;if(m.length>3&&+m[3]===0)return null;return[+m[0],+m[1],+m[2]];};
+ const tam=(v,pai)=>{if(!v)return pai;let m=v.match(/([\d.]+)pt/);if(m)return +m[1];m=v.match(/([\d.]+)px/);if(m)return +m[1]*0.75;m=v.match(/([\d.]+)(em|%)/);if(m)return pai*(m[2]==="%"?+m[1]/100:+m[1]);const kw={"xx-small":7,"x-small":7.5,small:10,medium:12,large:13.5,"x-large":18,"xx-large":24};return kw[v]||pai;};
+ const fam=v=>!v?null:/times|serif|georgia|garamond|cambria/i.test(v)&&!/sans/i.test(v)?"times":/courier|mono|consolas/i.test(v)?"courier":"helvetica";
+ const herda=(el,p)=>{const s=el.style||{},tg=el.tagName,o=Object.assign({},p);
+  if(/^(B|STRONG|TH|H\d)$/.test(tg)||/bold|[6-9]00/.test(s.fontWeight||""))o.b=true;if(/normal|[1-4]00/.test(s.fontWeight||""))o.b=false;
+  if(/^(I|EM)$/.test(tg)||s.fontStyle==="italic")o.i=true;
+  const td=(s.textDecoration||"")+" "+(s.textDecorationLine||"");if(tg==="U"||/underline/.test(td))o.u=true;if(/^(S|STRIKE|DEL)$/.test(tg)||/line-through/.test(td))o.s=true;
+  if(s.color)o.c=cor(s.color)||o.c;if(s.backgroundColor){const b=cor(s.backgroundColor);if(b)o.bg=b;}
+  if(tg==="H3")o.fs=13;if(tg==="H4")o.fs=12;if(tg==="SUP"||tg==="SUB")o.fs=o.fs*0.7;
+  o.fs=tam(s.fontSize,o.fs);if(s.fontFamily)o.f=fam(s.fontFamily)||o.f;return o;};
+ const BLK=/^(P|DIV|H\d|BLOCKQUOTE|LI|UL|OL|TABLE|HR|TR|TD|TH|TBODY|THEAD|TFOOT|CAPTION)$/;
+ const blocos=[];
+ const novo=(al,ind,mk)=>{const b={tp:"p",runs:[],al,ind,mk};blocos.push(b);return b;};
+ const corre=(n,st,ctx)=>{
+  for(const c of n.childNodes){
+   if(c.nodeType===3){const tx=c.textContent.replace(/\s+/g," ");if(!tx.trim()&&!ctx.b.runs.length)continue;ctx.b.runs.push(Object.assign({t:tx},st));continue;}
+   if(c.nodeType!==1)continue;const tg=c.tagName;
+   if(tg==="BR"){ctx.b.runs.push({br:1});continue;}
+   if(tg==="HR"){blocos.push({tp:"hr"});ctx.b=novo(ctx.al,ctx.ind);continue;}
+   if(tg==="TABLE"){const rows=[];c.querySelectorAll("tr").forEach(tr=>{if(tr.closest("table")!==c)return;rows.push([...tr.children].map(td=>{const s2=herda(td,st);const tx=td.innerText.replace(/ /g," ").trim();return{t:tx,b:s2.b||td.tagName==="TH",bg:s2.bg,c:s2.c,al:td.style.textAlign||"",cs:+td.getAttribute("colspan")||1};}));});
+    blocos.push({tp:"tab",rows});ctx.b=novo(ctx.al,ctx.ind);continue;}
+   const s2=herda(c,st);
+   if(BLK.test(tg)){
+    let ind=ctx.ind,al=c.style&&c.style.textAlign||ctx.al;const ml=c.style&&(parseFloat(c.style.marginLeft)||parseFloat(c.style.paddingLeft))||0;if(ml)ind+=ml*0.26;
+    if(tg==="BLOCKQUOTE")ind+=8;
+    if(tg==="UL"||tg==="OL"){let k=0;for(const li of c.children){if(li.tagName!=="LI"){continue;}k++;const sub={b:novo(al,ind+6,tg==="UL"?"•":k+"."),al,ind:ind+6};corre(li,herda(li,s2),sub);}ctx.b=novo(ctx.al,ctx.ind);continue;}
+    const sub={b:novo(al,ind),al,ind};if(/^H\d$/.test(tg))sub.b.esp=1.5;corre(c,s2,sub);ctx.b=novo(ctx.al,ctx.ind);continue;}
+   corre(c,s2,ctx);
+  }};
+ const st0={b:false,i:false,u:false,s:false,c:[35,35,35],bg:null,fs:BASE,f:"helvetica"};
+ corre(t,st0,{b:novo("left",0),al:"left",ind:0});
+ const fnt=r=>{d.setFont(r.f||"helvetica",r.b&&r.i?"bolditalic":r.b?"bold":r.i?"italic":"normal");d.setFontSize((r.fs||BASE)*K);};
+ const lh=fs=>fs*K*0.3528*1.42;
+ d._y+=2.2;let vazio=0;
+ for(const b of blocos){
+  if(b.tp==="hr"){pdfEspaco(d,4);d.setDrawColor(0);d.setLineWidth(.2);d.line(X0,d._y,X0+XW,d._y);d._y+=3;continue;}
+  if(b.tp==="tab"){if(!b.rows.length)continue;const nc=Math.max(...b.rows.map(r=>r.reduce((s,c)=>s+c.cs,0)));
+   const body=b.rows.map(r=>r.map(c=>({content:pt(c.t),colSpan:c.cs,styles:Object.assign({fontStyle:c.b?"bold":"normal",halign:/center|right/.test(c.al)?c.al:/^-?[\d.]+,\d+$|^R\$/.test(c.t)?"right":"left"},c.bg?{fillColor:c.bg}:{},c.c?{textColor:c.c}:{})})));
+   d.autoTable({body,startY:d._y,margin:{left:X0,right:d._W-X0-XW,top:34,bottom:18},theme:"grid",styles:{fontSize:8,cellPadding:1.2,lineColor:[140,140,140],lineWidth:.15,textColor:[35,35,35],overflow:"linebreak"},tableWidth:nc>4?"auto":"wrap"});
+   d._y=d.lastAutoTable.finalY+3;continue;}
+  // parágrafo: quebra em palavras
+  const toks=[];for(const r of b.runs){if(r.br){toks.push({br:1});continue;}r.t.split(/(\s+)/).forEach(w=>{if(w)toks.push(Object.assign({},r,{t:pt(w).replace(/ /g," ")}));});}
+  while(toks.length&&!toks[0].br&&!toks[0].t.trim())toks.shift();
+  if(!toks.length||toks.every(x=>x.br||!x.t.trim())){if(b.runs.some(r=>r.br)||b.runs.length){if(vazio<1){d._y+=lh(BASE)*0.7;vazio++;}}continue;}vazio=0;
+  const x0=X0+b.ind,mx=XW-b.ind,lines=[];let ln=[],w=0;
+  const flush=f=>{while(ln.length&&!ln[ln.length-1].t.trim())ln.pop();lines.push({toks:ln,w,ult:f});ln=[];w=0;};
+  for(const k of toks){if(k.br){flush(true);continue;}fnt(k);k.w=d.getTextWidth(k.t);if(!ln.length&&!k.t.trim())continue;
+   if(w+k.w>mx&&ln.length&&k.t.trim()){flush(false);}if(!ln.length&&!k.t.trim())continue;
+   if(k.w>mx){const cs=d.splitTextToSize(k.t,mx);cs.forEach((p,i)=>{const q=Object.assign({},k,{t:p});fnt(q);q.w=d.getTextWidth(p);if(i<cs.length-1){ln.push(q);w+=q.w;flush(false);}else{ln.push(q);w+=q.w;}});continue;}
+   ln.push(k);w+=k.w;}
+  if(ln.length)flush(true);
+  if(b.esp)d._y+=1.5;
+  lines.forEach((L,li)=>{const fsM=Math.max(BASE*0.8,...L.toks.map(k=>k.fs||BASE)),h=lh(fsM);pdfEspaco(d,h+1);d._y+=h*0.78;
+   L.w=L.toks.reduce((s,k)=>s+k.w,0);
+   let x=x0,ex=0;if(b.al==="center")x=x0+(mx-L.w)/2;else if(b.al==="right")x=x0+mx-L.w;else if(b.al==="justify"&&!L.ult){const sp=L.toks.filter(k=>!k.t.trim()).length;if(sp)ex=(mx-L.w)/sp;}
+   if(li===0&&b.mk){d.setFont("helvetica","normal");d.setFontSize(BASE*K);d.setTextColor(35);d.text(b.mk,x0-(b.mk==="•"?3.2:d.getTextWidth(b.mk)+1.2),d._y);}
+   for(const k of L.toks){fnt(k);const wd=k.w+(k.t.trim()?0:ex);
+    if(k.bg){d.setFillColor(...k.bg);d.rect(x,d._y-(k.fs||BASE)*K*0.3528*0.85,wd,(k.fs||BASE)*K*0.3528*1.12,"F");}
+    const c=k.c||[35,35,35];d.setTextColor(...c);
+    if(k.t.trim())d.text(k.t,x,d._y);
+    if(k.u||k.s){d.setDrawColor(...c);d.setLineWidth(.18);const yy=k.u?d._y+0.7:d._y-(k.fs||BASE)*K*0.3528*0.3;d.line(x,yy,x+k.w,yy);}
+    x+=wd;}
+   d._y+=h*0.22;});
+  d._y+=1.2;
+ }
+ d.setTextColor(0);d._y+=1.5;
 }
 function pdfTab(d,head,rows,o){
  o=o||{};const nc=o.numCols||[];
@@ -1874,23 +2156,25 @@ function pdfTab(d,head,rows,o){
    if(nc.indexOf(h.column.index)>=0)h.cell.styles.halign="right";
    if(h.section==="body"){const r=rows[h.row.index],s=r&&r._s;
     if(s==="st"){h.cell.styles.fontStyle="bold";h.cell.styles.fillColor=[244,246,245];}
-    else if(s==="bs"){h.cell.styles.fontStyle="bold";h.cell.styles.fillColor=[244,246,245];}
+    else if(s==="bs"){h.cell.styles.fontStyle="bold";h.cell.styles.fillColor=[244,246,245];h.cell.styles.textColor=U2;}
+    else if(s==="es"){h.cell.styles.fillColor=UEB;h.cell.styles.textColor=UE;}
+    else if(s==="pv"){h.cell.styles.fillColor=[244,246,245];if(typeof raw==="number"){h.cell.styles.fontStyle="bold";h.cell.styles.textColor=raw>0?UP:UR;}else h.cell.styles.fontStyle="italic";}
     else if(s==="im"){h.cell.styles.fontStyle="bold";h.cell.styles.fillColor=UH;h.cell.styles.textColor=UK;}
     else if(s==="rc"){h.cell.styles.fontStyle="bold";h.cell.styles.textColor=UR;}
     else if(s==="dp"){h.cell.styles.fontStyle="bold";h.cell.styles.textColor=UD;}
-    else if(s==="gr"){h.cell.styles.fontStyle="bold";h.cell.styles.textColor=U2;h.cell.styles.fillColor=[244,246,245];}
+    else if(s==="gr"){h.cell.styles.fontStyle="bold";h.cell.styles.textColor=/^DESP/.test(h.cell.text[0]||"")?UD:/^RECE/.test(h.cell.text[0]||"")?UR:U2;h.cell.styles.fillColor=[244,246,245];}
     else if(s==="sgp"){h.cell.styles.fontStyle="bold";}}
   }});
  d._y=d.lastAutoTable.finalY+7;
 }
-function pdfAssin(d,c){
- pdfEspaco(d,34);const W=d._W,y=d._y+20;
- d.setDrawColor(27,31,29);d.setLineWidth(.25);d.line(20,y,W/2-10,y);d.line(W/2+10,y,W-20,y);
- d.setFont("helvetica","bold");d.setFontSize(8.2);d.setTextColor(27,31,29);
- d.text(pt(c.resp||" "),(20+W/2-10)/2,y+4,{align:"center"});d.text(pt(c.local||" "),(W/2+10+W-20)/2,y+4,{align:"center"});
- d.setFont("helvetica","normal");d.setFontSize(7.6);d.setTextColor(80);
- d.text(pt(c.cargo||"Responsável pelas informações"),(20+W/2-10)/2,y+8,{align:"center"});d.text(new Date().toLocaleDateString("pt-BR"),(W/2+10+W-20)/2,y+8,{align:"center"});
- d._y=y+14;
+function pdfAssin(d){
+ pdfEspaco(d,52);const W=d._W;let y=d._y+10;
+ d.setFont("helvetica","normal");d.setFontSize(9.5);d.setTextColor(27,31,29);d.text(pt(localData()),W-20,y,{align:"right"});
+ y+=26;d.setDrawColor(27,31,29);d.setLineWidth(.25);
+ const cx=[(20+W/2-10)/2,(W/2+10+W-20)/2];d.line(20,y,W/2-10,y);d.line(W/2+10,y,W-20,y);
+ assinLer().forEach((a,i)=>{d.setFont("helvetica","bold");d.setFontSize(9);d.setTextColor(27,31,29);d.text(pt(a.n),cx[i],y+4.5,{align:"center"});
+  d.setFont("helvetica","normal");d.setFontSize(8.2);d.setTextColor(60);a.l.forEach((x,j)=>d.text(pt(x),cx[i],y+9+j*4,{align:"center"}));});
+ d._y=y+18;
 }
 function pdfSalvar(d,nome){pdfTimbre(d);salvarArq(nome,d.output("arraybuffer"),"application/pdf");}
 function pdfDem(d,dd){
@@ -1913,7 +2197,7 @@ function aoa(){
  const blc=g=>plano(g,true).forEach(it=>{if(it.tp==="sg"){o.push(tt(it.nome,m=>sgVal(it,m)));return;}const r=lin(it.l);if(it.ind)r[0]="    "+r[0];o.push(r);});
  o.push(["RECEITAS"]);blc("R");o.push(tt("Total de Receitas",recM));
  o.push(["DESPESAS"]);blc("D");o.push(tt("Total de despesas",despM));
- o.push(tt("Base de cálculo do ISSQN",baseM));o.push(tt("ISS pago por estimativa (comparativo)",estM));o.push(tt("Imposto devido",impM));if(sMZ(estM))o.push(tt("Comparativo: apurado - estimativa",difM));
+ o.push(tt("Base de cálculo do ISSQN",baseM));o.push(tt("ISS-Estimativa",estM));o.push(tt("Imposto devido",impM));if(sMZ(estM))o.push(tt("Valor a provisionar",difM));
  return o;
 }
 function demAoa(dd){
@@ -1927,24 +2211,38 @@ function xlsApur(){
  const conf=[["Arquivo","Linha","Lançamentos","Total do ano (bruto)","Colunas"]];
  for(const l of ST.linhas){const o=ST.res[l.k];if(!o)continue;conf.push([(o.arqs.join(" + ")||"—"),l.lb,o.lin,somaAno(m=>bruto(l.k,m)),o.cols]);}
  xlsSalvar("apuracao-issqn-"+ST.ano+".xlsx",[
-  ["Apuração "+ST.ano,xlsSheet(timbreAoa("Resumo mês a mês").concat(aoa().slice(2)),[36].concat(Array(13).fill(15)))],
-  ["Demonstrativo",xlsSheet(timbreAoa("Demonstrativo da base de cálculo").concat(demAoa(docDados(pegaM($("#mes"))))),[18,40,18])],
+  ["Apuração "+ST.ano,xlsSheet(timbreAoa("Resumo mês a mês").concat(aoa().slice(2),($("#story .hl")&&$("#story .hl").innerText.trim())?[[],["Análise do período"],[$("#story .hl").innerText.trim()]]:[]),[36].concat(Array(13).fill(15)))],
   ["Conferência",xlsSheet(conf,[40,36,12,18,30],{intc:[2]})]]);
+}
+/* cartões da conta do imposto (os mesmos da tela) no PDF */
+function pdfCartoes(d){
+ const ks=[...document.querySelectorAll("#storyK .flx > *")];if(!ks.length)return;
+ const COR={r:[UR,[230,244,236]],d:[UD,[253,240,230]],b:[U2,[243,247,245]],i:[UK,UH],e:[UE,UEB],p:[UP,[243,247,245]],n:[UR,[243,247,245]]};
+ const cards=ks.filter(x=>x.classList.contains("k")).length,ops=ks.length-cards,W=d._W-24,wo=5,wc=(W-ops*wo)/cards,h=15;
+ pdfEspaco(d,h+4);let x=12;const y=d._y-2;
+ for(const el of ks){
+  if(!el.classList.contains("k")){d.setFont("helvetica","bold");d.setFontSize(11);d.setTextColor(93,107,102);const t=el.classList.contains("sep")?"|":el.textContent.replace("−","-").replace("→",">");d.text(t,x+wo/2,y+h/2+1.2,{align:"center"});x+=wo;continue;}
+  const c=COR[[...el.classList].find(k=>COR[k])||"b"];
+  d.setFillColor(...c[1]);d.rect(x,y,wc,h,"F");d.setFillColor(...(c[1]===UH?[224,176,0]:c[0]));d.rect(x,y,1.1,h,"F");
+  const g=q=>(el.querySelector(q)||{}).textContent||"",ink=c[1]===UH?UK:[93,107,102];
+  d.setFont("helvetica","normal");d.setFontSize(6.8);d.setTextColor(...ink);d.text(pt(g("span")),x+3,y+4.2);
+  d.setFont("helvetica","bold");d.setFontSize(10.5);d.setTextColor(...c[0]);d.text(pt(g("b")),x+3,y+9.4);
+  d.setFont("helvetica","normal");d.setFontSize(6.5);d.setTextColor(...ink);d.text(pt(g("i")),x+3,y+13);
+  x+=wc;}
+ d._y=y+h+7;
 }
 function pdfApur(){
  const d=pdfNovo("Apuração do ISSQN — Resumo mês a mês","Exercício "+ST.ano+" · alíquota "+fmt(ST.aliq)+"%"+(ST.fano?" · somente lançamentos do ano-base":""),true);if(!d)return;
  const b=[],lin=l=>{const r=[l.lb];let s=0;for(const m of MZ()){const v=val(l.k,m);s+=v;r.push(v||"–");}r.push(s);return r;};
  const tt=(t,f,s)=>{const r=[t];for(const m of MZ())r.push(f(m)||"–");r.push(sMZ(f));return{_s:s,c:r};};
  const blc=g=>plano(g,true).forEach(it=>{if(it.tp==="sg"){const r=tt(it.nome,m=>sgVal(it,m),"sgp");b.push(r);return;}const r=lin(it.l);if(it.ind)r[0]={content:r[0],styles:{cellPadding:{left:5,top:1.1,bottom:1.1,right:1.1}}};b.push(r);});
- b.push({_s:"gr",c:[{content:"RECEITAS",colSpan:MZ().length+2}]});blc("R");b.push(tt("Total de receitas",recM,"st"));
- b.push({_s:"gr",c:[{content:"DESPESAS",colSpan:MZ().length+2}]});blc("D");b.push(tt("Total de despesas",despM,"st"));
- b.push(tt("Base de cálculo do ISSQN",baseM,"bs"));b.push(tt("ISS pago por estimativa (comparativo)",estM,""));b.push(tt("Imposto devido ("+fmt(ST.aliq)+"%)",impM,"im"));if(sMZ(estM))b.push(tt("Comparativo: apurado - estimativa",difM,""));
+ b.push({_s:"gr",c:[{content:"RECEITAS",colSpan:MZ().length+2}]});blc("R");b.push(tt("Total de receitas",recM,"rc"));
+ b.push({_s:"gr",c:[{content:"DESPESAS",colSpan:MZ().length+2}]});blc("D");b.push(tt("Total de despesas",despM,"dp"));
+ b.push(tt("Base de cálculo do ISSQN",baseM,"bs"));b.push(tt("ISS-Estimativa",estM,"es"));b.push(tt("Imposto devido ("+fmt(ST.aliq)+"%)",impM,"im"));if(sMZ(estM))b.push(tt("Valor a provisionar",difM,"pv"));
+ pdfCartoes(d);
  pdfH(d,"Resumo mês a mês");
  pdfTab(d,["Descrição / Períodos",...MZ().map(m=>ABR[m]),MZf()?"Total dos meses":"Acumulado"],b,{fs:6.3,numCols:MZ().map((x,i)=>i+1).concat(MZ().length+1),cs:{0:{cellWidth:48}}});
- const dd=docDados(pegaM($("#mes")));
- pdfH(d,"Demonstrativo — "+dd.per);pdfDem(d,dd);
- const neg=[];for(let x=1;x<=12;x++)if((recM(x)||despM(x))&&baseM(x)<0)neg.push(MES[x]);
- if(neg.length)pdfP(d,"Base negativa em "+neg.join(", ")+": nesses meses o imposto foi considerado zero.");
+ {const hl=$("#story .hl");if(hl&&hl.innerText.trim()){pdfH(d,"Análise do período");pdfP(d,hl.innerText.trim(),{fs:9});}}
  pdfSalvar(d,"apuracao-issqn-"+ST.ano+".pdf");
 }
 
@@ -1960,7 +2258,7 @@ function estDados(){
  return{ms,R,D,I,ind,evo,m,cmp};
 }
 /* ---------- Anos: histórico de todos os anos ---------- */
-const IND=[["R","Receitas"],["D","Despesas"],["B","Base de cálculo"],["I","ISS devido"],["E","ISS pago por estimativa"]];let indAt="E",HIST=null,HIST_V=-1;
+const IND=[["R","Receitas"],["D","Despesas"],["B","Base de cálculo"],["I","ISS devido"],["E","ISS-Estimativa"]];let indAt="E",HIST=null,HIST_V=-1;
 function anosNaBase(){
  const ys=new Set();
  for(const l of ST.linhas){if(l.info||!l.arq||!l.cm)continue;
@@ -1974,53 +2272,101 @@ function histAnos(){
   for(const y of anosNaBase()){
    let d={};try{d=JSON.parse(localStorage.getItem("issqn.v1."+y)||"{}")||{};}catch(e){}
    ST.ano=y;ST.fano=true;ST.ov=d.ov||{};ST.aliq=typeof d.aliq==="number"?d.aliq:sv.aliq;ST.res=calcRes();
-   const r={ano:y,aliq:ST.aliq,R:[],D:[],B:[],I:[],E:[]};for(let m=1;m<=12;m++){r.R.push(recM(m));r.D.push(despM(m));r.B.push(baseM(m));r.I.push(impM(m));r.E.push(estM(m));}
+   const r={ano:y,aliq:ST.aliq,R:[],D:[],B:[],I:[],E:[]};for(let m=1;m<=12;m++){r.R.push(recM(m));r.D.push(despM(m));r.B.push(baseM(m));r.I.push(impM(m));r.E.push(estM(m));}r.F=r.I.map((v,i)=>difX(v,r.E[i],!!(r.R[i]||r.D[i])));
+   if(!r.R.some(v=>v))continue; /* ano sem receita na base (só datas soltas ou só estimativa) não entra */
    out.push(r);
   }
  }finally{Object.assign(ST,sv);}
  return out;
 }
 const smA=a=>a.reduce((s,v)=>s+v,0);
+const AF={anos:null,ms:[],rol:60};
+function rolMes(el,st,H0,cb){
+ const ult=afFim(H0),f=st.fimSel||ult;if(!f){el.innerHTML="";return;}
+ const anos=H0.map(h=>h.ano);
+ el.innerHTML='<span class="hint" style="margin:0 4px 0 0">Período termina em</span><select class="rmA">'+anos.map(y=>'<option'+(y===f.a?" selected":"")+">"+y+"</option>").join("")+"</select>"+ABR.slice(1).map((a,i)=>'<button data-fm="'+(i+1)+'"'+(f.m===i+1?' class="on"':"")+(f.a===ult.a&&i+1>ult.m?' disabled title="Sem movimento"':"")+">"+a+"</button>").join("")+'<span style="width:8px"></span><button data-fu'+(st.fimSel?"":' class="on"')+' title="Volta para o último mês com movimento">Mais recente ('+ABR[ult.m]+"/"+ult.a+")</button>";
+ const set=(a,m)=>{if(a>ult.a||a===ult.a&&m>ult.m)m=a===ult.a?ult.m:m;if(a>ult.a){a=ult.a;m=ult.m;}st.fimSel=a===ult.a&&m===ult.m?null:{a,m};cb();};
+ el.querySelector(".rmA").onchange=e=>set(+e.target.value,f.m);
+ el.querySelectorAll("[data-fm]").forEach(b=>b.onclick=()=>set(f.a,+b.dataset.fm));
+ el.querySelector("[data-fu]").onclick=()=>{st.fimSel=null;cb();};
+}
+function afFim(H0){for(let i=H0.length-1;i>=0;i--){const h=H0[i];for(let m=12;m>=1;m--)if(h.R[m-1]||h.D[m-1]||h.I[m-1])return{a:h.ano,m};}return null;}
+function afDados(){
+ const H0=HIST||[],todos=H0.map(h=>h.ano),fim=AF.fimSel||afFim(H0);
+ if(!AF.anos)AF.anos=new Set(todos.slice(-5));
+ let H,ms,per,inW;
+ if(AF.rol&&fim){
+  const e=fim.a*12+fim.m-1,b=e-AF.rol+1,ini={a:Math.floor(b/12),m:b%12+1};
+  inW=(a,m)=>{const k=a*12+m-1;return k>=b&&k<=e;};
+  ms=[1,2,3,4,5,6,7,8,9,10,11,12];
+  H=H0.filter(h=>h.ano>=ini.a&&h.ano<=fim.a);
+  per="últimos "+AF.rol+" meses ("+ABR[ini.m]+"/"+ini.a+" a "+ABR[fim.m]+"/"+fim.a+")";
+ }else{
+  ms=AF.ms.length?AF.ms.slice().sort((a,b)=>a-b):[1,2,3,4,5,6,7,8,9,10,11,12];
+  H=H0.filter(h=>AF.anos.has(h.ano));inW=()=>true;
+  per=AF.ms.length&&ms.length<12?(ms.every((x,i)=>!i||x===ms[i-1]+1)?ABR[ms[0]]+" a "+ABR[ms[ms.length-1]]:ms.map(x=>ABR[x]).join(", ")):"ano inteiro";
+ }
+ H=H.map(h=>{const o={ano:h.ano,aliq:h.aliq};["R","D","B","I","E","F"].forEach(k=>o[k]=h[k].map((v,i)=>inW(h.ano,i+1)?v:null));return o;});
+ const sA=a=>ms.reduce((s,m)=>s+(a[m-1]||0),0);
+ return{H0,todos,H,ms,sA,per,fim};
+}
+function afFiltros(){
+ const {H0,todos}=afDados();
+ const rl=[[60,"Últimos 60 meses (5 anos)"],[36,"Últimos 36 meses"],[12,"Últimos 12 meses"]];
+ $("#anosAnos").innerHTML=rl.map(([n,t])=>'<button data-r="'+n+'"'+(AF.rol===n?' class="on"':"")+' title="Soma os '+n+' meses corridos até o último mês com movimento">'+t+"</button>").join("")+'<span style="width:8px"></span>'+todos.map(y=>'<button data-y="'+y+'"'+(!AF.rol&&AF.anos.has(y)?' class="on"':"")+">"+y+"</button>").join("")+'<button data-ya="t">Todos os anos</button><span style="width:8px"></span><button id="anosMsT" title="Mostrar ou ocultar o filtro por meses">'+(AF.rol?"Mês final":"Meses")+($("#anosMsL").hidden?" ▸":" ▾")+(AF.rol?(AF.fimSel?" ("+ABR[AF.fimSel.m]+"/"+AF.fimSel.a+")":""):AF.ms.length?" ("+AF.ms.length+")":"")+"</button>";
+ $("#anosMsT").onclick=()=>{$("#anosMsL").hidden=!$("#anosMsL").hidden;afFiltros();};
+ $("#anosAnos").querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{AF.rol=+b.dataset.r;AF.ms=[];anosTab();});
+ $("#anosAnos").querySelectorAll("[data-y]").forEach(b=>b.onclick=()=>{const y=+b.dataset.y;if(AF.rol){AF.rol=0;AF.anos=new Set([y]);}else{AF.anos.has(y)?AF.anos.delete(y):AF.anos.add(y);if(!AF.anos.size)AF.anos.add(y);}anosTab();});
+ $("#anosAnos").querySelectorAll("[data-ya]").forEach(b=>b.onclick=()=>{AF.rol=0;AF.anos=new Set(todos);anosTab();});
+ const tri=[["1º tri",[1,2,3]],["2º tri",[4,5,6]],["3º tri",[7,8,9]],["4º tri",[10,11,12]],["1º sem",[1,2,3,4,5,6]],["2º sem",[7,8,9,10,11,12]]];
+ $("#anosMs").innerHTML=ABR.slice(1).map((a,i)=>'<button data-m="'+(i+1)+'"'+(!AF.rol&&AF.ms.indexOf(i+1)>=0?' class="on"':"")+">"+a+"</button>").join("")+'<span style="width:8px"></span><button data-ma=""'+(AF.rol||AF.ms.length?"":' class="on"')+'>Ano inteiro</button>'+tri.map(([t,v])=>'<button data-ma="'+v.join(",")+'">'+t+"</button>").join("")+'<button data-ma="ytd" title="Meses já apurados no ano mais recente — compara todos os anos no mesmo período">Mesmo período do ano atual</button>';
+ $("#anosMs").querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{if(AF.rol){AF.rol=0;AF.ms=[];}const m=+b.dataset.m,i=AF.ms.indexOf(m);i>=0?AF.ms.splice(i,1):AF.ms.push(m);anosTab();});
+ $("#anosMs").querySelectorAll("[data-ma]").forEach(b=>b.onclick=()=>{AF.rol=0;const v=b.dataset.ma;if(v==="ytd"){const u=H0[H0.length-1],a=[];if(u)u.I.forEach((x,i)=>{if(x||u.R[i]||u.D[i])a.push(i+1);});AF.ms=a.length?[...Array(Math.max(...a)).keys()].map(i=>i+1):[];}else AF.ms=v?v.split(",").map(Number):[];anosTab();});
+ if(AF.rol)rolMes($("#anosMs"),AF,H0,anosTab);
+}
 function anosTab(){
  if(!(HIST&&HIST_V===DADOS_V))$("#anosInfo").textContent="calculando…";
  setTimeout(()=>{
-  if(!(HIST&&HIST_V===DADOS_V)){HIST=histAnos();HIST_V=DADOS_V;}const H=HIST;
-  if(!H.length){$("#anosRes").innerHTML='<tbody><tr><td class="hint">Sem dados. Carregue as planilhas.</td></tr></tbody>';$("#anosMes").innerHTML="";$("#anosInfo").textContent="";return;}
-  $("#anosInfo").textContent=H.length+(H.length>1?" anos":" ano")+" · "+H[0].ano+" a "+H[H.length-1].ano+" · o ISS soma a apuração de cada mês com a alíquota de cada ano";
-  const tR=k=>smA(H.map(h=>smA(h[k])));
-  let h='<thead><tr><th>Ano</th><th>Receitas</th><th>Despesas</th><th>Base de cálculo</th><th>ISS devido</th><th>ISS pago por estimativa</th><th>Apurado − estimativa</th><th>Alíquota</th></tr></thead><tbody>';
-  h+=H.map(x=>{const I=smA(x.I),E=smA(x.E);return '<tr'+(x.ano===ST.ano?' class="atual"':"")+'><td>'+x.ano+"</td>"+[smA(x.R),smA(x.D),smA(x.B),I,E].map(v=>"<td"+(v?"":' class="zero"')+">"+(v?fmt(v):"–")+"</td>").join("")+"<td"+(E?"":' class="zero"')+">"+(E?fmt(I-E):"–")+"</td><td>"+fmt(x.aliq)+"%</td></tr>";}).join("");
-  h+='<tr class="cons"><td>Total</td>'+["R","D","B","I","E"].map(k=>"<td>"+fmt(tR(k))+"</td>").join("")+"<td>"+(tR("E")?fmt(tR("I")-tR("E")):"–")+"</td><td></td></tr></tbody>";
+  if(!(HIST&&HIST_V===DADOS_V)){HIST=histAnos();HIST_V=DADOS_V;}
+  if(!HIST.length){$("#anosRes").innerHTML='<tbody><tr><td class="hint">Sem dados. Carregue as planilhas.</td></tr></tbody>';$("#anosMes").innerHTML="";$("#anosInfo").textContent="";$("#anosAnos").innerHTML="";$("#anosMs").innerHTML="";return;}
+  afFiltros();
+  const {H,sA,per}=afDados();
+  const nM=H.reduce((t,x)=>t+x.R.filter((v,i)=>v!==null&&(v||x.D[i]||x.I[i])).length,0);
+  $("#anosInfo").textContent=(AF.rol?per+" · "+nM+" meses com dados"+(nM<AF.rol?" (a base não cobre todo o período)":""):H.length+(H.length>1?" anos":" ano")+" · "+(H.length?H[0].ano+(H.length>1?" a "+H[H.length-1].ano:""):"")+" · "+per)+" · o ISS soma a apuração de cada mês com a alíquota de cada ano";
+  const tR=k=>smA(H.map(h=>sA(h[k])));
+  let h='<thead><tr><th>Ano</th><th>Receitas</th><th>Despesas</th><th>Base de cálculo</th><th>ISS devido</th><th>ISS-Estimativa</th><th>Valor a provisionar</th><th>Alíquota</th></tr></thead><tbody>';
+  h+=H.map(x=>{const I=sA(x.I),E=sA(x.E),F=sA(x.F),tF=x.F.some(v=>v!==null);return '<tr'+(x.ano===ST.ano?' class="atual"':"")+'><td>'+x.ano+"</td>"+[sA(x.R),sA(x.D),sA(x.B),I,E].map(v=>"<td"+(v?"":' class="zero"')+">"+(v?fmt(v):"–")+"</td>").join("")+"<td"+(tF?(F>0.005?' class="pos"':F<-0.005?' class="neg"':""):' class="zero"')+">"+(tF?fmt(F):"–")+"</td><td>"+fmt(x.aliq)+"%</td></tr>";}).join("");
+  h+='<tr class="cons"><td>Acumulado</td>'+["R","D","B","I","E"].map(k=>"<td>"+fmt(tR(k))+"</td>").join("")+"<td>"+(tR("F")?fmt(tR("F")):"–")+"</td><td></td></tr></tbody>";
   $("#anosRes").innerHTML=h;
   $("#anosInd").innerHTML=IND.map(([k,t])=>'<button data-k="'+k+'"'+(k===indAt?' class="on"':"")+">"+t+"</button>").join("");
   $("#anosInd").querySelectorAll("button").forEach(b=>b.onclick=()=>{indAt=b.dataset.k;anosMes();$("#anosInd").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));});
   anosMes();
  },20);
 }
+function anosAoa(k,ex){const {H,ms,sA}=afDados(),o=[["Ano",...ms.map(m=>ABR[m]),"Total"]];H.forEach(x=>o.push([x.ano].concat(ms.map(m=>ex&&x[k][m-1]===null?"":x[k][m-1]),[sA(x[k])])));const cons=ms.map(m=>smA(H.map(x=>x[k][m-1])));o.push(["Acumulado"].concat(cons,[smA(cons)]));return o;}
 function anosMes(){
- const H=HIST||[],k=indAt;if(!H.length)return;
- const c=["Ano",...ABR.slice(1),"Total"];
- let h="<thead><tr>"+c.map(t=>"<th>"+t+"</th>").join("")+"</tr></thead><tbody>";
- const cel=v=>"<td"+(v?"":' class="zero"')+">"+(v?fmt(v):"–")+"</td>";
- h+=H.map(x=>'<tr'+(x.ano===ST.ano?' class="atual"':"")+"><td>"+x.ano+"</td>"+x[k].map(cel).join("")+'<td class="tt">'+fmt(smA(x[k]))+"</td></tr>").join("");
- const cons=[];for(let m=0;m<12;m++)cons.push(smA(H.map(x=>x[k][m])));
- h+='<tr class="cons"><td>Consolidado</td>'+cons.map(v=>"<td>"+(v?fmt(v):"–")+"</td>").join("")+"<td>"+fmt(smA(cons))+"</td></tr>";
- const nA=H.filter(x=>smA(x[k])!==0).length||1;
- h+='<tr class="cons" style="font-weight:400"><td title="Média dos '+nA+' anos com valor">Média por ano ('+nA+')</td>'+cons.map(v=>"<td>"+(v?fmt(v/nA):"–")+"</td>").join("")+"<td>"+fmt(smA(cons)/nA)+"</td></tr></tbody>";
+ const {H}=afDados(),k=indAt;if(!H.length){$("#anosMes").innerHTML="";return;}
+ const a=anosAoa(k),cel=v=>v===null?'<td class="zero" title="Fora do período">·</td>':"<td"+(v?"":' class="zero"')+">"+(v?fmt(v):"–")+"</td>";
+ let h="<thead><tr>"+a[0].map(t=>"<th>"+t+"</th>").join("")+"</tr></thead><tbody>";
+ h+=a.slice(1,-1).map(r=>'<tr'+(r[0]===ST.ano?' class="atual"':"")+"><td>"+r[0]+"</td>"+r.slice(1,-1).map(cel).join("")+'<td class="tt">'+fmt(r[r.length-1])+"</td></tr>").join("");
+ const c=a[a.length-1];h+='<tr class="cons"><td>Acumulado</td>'+c.slice(1).map(v=>"<td>"+(v?fmt(v):"–")+"</td>").join("")+"</tr>";
+ const nA=H.filter((x,i)=>a[i+1][a[i+1].length-1]!==0).length||1;
+ h+='<tr class="cons" style="font-weight:400"><td title="Média dos '+nA+' anos com valor">Média por ano ('+nA+')</td>'+c.slice(1).map(v=>"<td>"+(v?fmt(v/nA):"–")+"</td>").join("")+"</tr></tbody>";
  $("#anosMes").innerHTML=h;
 }
-function anosAoa(k){const H=HIST||[],o=[["Ano",...ABR.slice(1),"Total"]];H.forEach(x=>o.push([x.ano].concat(x[k],[smA(x[k])])));const cons=[];for(let m=0;m<12;m++)cons.push(smA(H.map(x=>x[k][m])));o.push(["Consolidado"].concat(cons,[smA(cons)]));return o;}
 function xlsAnos(){
- if(!HIST)HIST=histAnos();const H=HIST;
- const r=[["Ano","Receitas","Despesas","Base de cálculo","ISS devido","ISS pago por estimativa","Apurado - estimativa","Alíquota %"]].concat(H.map(x=>[x.ano,smA(x.R),smA(x.D),smA(x.B),smA(x.I),smA(x.E),smA(x.I)-smA(x.E),x.aliq]));
- xlsSalvar("historico-anos-issqn.xlsx",[["Resumo por ano",xlsSheet(timbreAoa("Histórico por ano").concat(r),[10,18,18,18,16,18,18,10],{intc:[0]})]].concat(IND.map(([k,t])=>[t.slice(0,31),xlsSheet(anosAoa(k),[12].concat(Array(13).fill(15)),{intc:[0]})])));
+ if(!(HIST&&HIST_V===DADOS_V)){HIST=histAnos();HIST_V=DADOS_V;}const {H,sA,per}=afDados();
+ const r=[["Ano","Receitas","Despesas","Base de cálculo","ISS devido","ISS-Estimativa","Valor a provisionar","Alíquota %"]].concat(H.map(x=>[x.ano,sA(x.R),sA(x.D),sA(x.B),sA(x.I),sA(x.E),sA(x.F),x.aliq]));
+ const T=k=>smA(H.map(x=>sA(x[k])));r.push(["Acumulado",T("R"),T("D"),T("B"),T("I"),T("E"),T("F"),""]);
+ xlsSalvar("analise-acumulada-issqn.xlsx",[["Resumo por ano",xlsSheet(timbreAoa("Análise Acumulada — "+per).concat(r),[12,18,18,18,16,18,18,10],{intc:[0]})]].concat(IND.map(([k,t])=>[t.slice(0,31),xlsSheet(anosAoa(k,1),[12].concat(Array(13).fill(15)),{intc:[0]})])));
 }
 function pdfAnos(){
- if(!HIST)HIST=histAnos();const H=HIST,d=pdfNovo("Apuração do ISSQN — Histórico por ano",H.length?H[0].ano+" a "+H[H.length-1].ano:"",true);if(!d)return;
+ if(!(HIST&&HIST_V===DADOS_V)){HIST=histAnos();HIST_V=DADOS_V;}const {H,sA,per,ms}=afDados(),d=pdfNovo("Apuração do ISSQN — Análise Acumulada",(H.length?H[0].ano+" a "+H[H.length-1].ano:"")+" · "+per,true);if(!d)return;
+ const T=k=>smA(H.map(x=>sA(x[k])));
  pdfH(d,"Resumo por ano");
- pdfTab(d,["Ano","Receitas","Despesas","Base de cálculo","ISS devido","ISS estimativa","Apurado - estimativa","Alíquota"],H.map(x=>[String(x.ano),smA(x.R),smA(x.D),smA(x.B),smA(x.I),smA(x.E),smA(x.I)-smA(x.E),fmt(x.aliq)+"%"]),{numCols:[1,2,3,4,5,6,7]});
- IND.forEach(([k,t])=>{pdfH(d,t+" — mês a mês");const a=anosAoa(k);pdfTab(d,a[0],a.slice(1).map((r,i)=>i===a.length-2?{_s:"st",c:[r[0]].concat(r.slice(1))}:[String(r[0])].concat(r.slice(1))),{fs:6.4,numCols:[1,2,3,4,5,6,7,8,9,10,11,12,13]});});
- pdfSalvar(d,"historico-anos-issqn.pdf");
+ pdfTab(d,["Ano","Receitas","Despesas","Base de cálculo","ISS devido","ISS-Estimativa","Valor a provisionar","Alíquota"],H.map(x=>[String(x.ano),sA(x.R),sA(x.D),sA(x.B),sA(x.I),sA(x.E),sA(x.F),fmt(x.aliq)+"%"]).concat([{_s:"st",c:["Acumulado",T("R"),T("D"),T("B"),T("I"),T("E"),T("F"),""]}]),{numCols:[1,2,3,4,5,6,7]});
+ IND.forEach(([k,t])=>{pdfH(d,t+" — mês a mês");const a=anosAoa(k,1);pdfTab(d,a[0],a.slice(1).map((r,i)=>i===a.length-2?{_s:"st",c:r}:[String(r[0])].concat(r.slice(1))),{fs:6.4,numCols:a[0].map((x,i)=>i).slice(1)});});
+ pdfSalvar(d,"analise-acumulada-issqn.pdf");
 }
 function xlsEst(){
  const e=estDados();
@@ -2041,10 +2387,10 @@ function pdfEst(){
  pdfTab(d,["Mês","Receitas","Despesas","Sinistralidade","Base","ISSQN","Var. base"],b,{fs:7.2,numCols:[1,2,3,4,5,6]});
  if(e.m){pdfH(d,"Composição — "+mTxt(e.m,ST.ano).replace(" / ","/"));pdfTab(d,["Grupo","Linha","Valor (R$)","% do grupo"],e.cmp.map(r=>[r[0],r[1],r[2],fmt(r[3])+"%"]),{numCols:[2,3]});}
  const e2=ecTabs();if(e2){const P=v=>v===""?"–":v,pp=v=>v===""?"–":fmt(v)+"%";
-  pdfH(d,"Comparativo entre anos — apurado × estimativa ("+ecPer().per+")");
-  pdfTab(d,["Ano","Receitas","Despesas","Sinistr.","Base","ISS apurado","ISS estimativa","Apurado − estim.","Estim. ÷ apurado"],e2.t.slice(1).map((r,i,A)=>{const c=[String(r[0]),r[1],r[2],pp(r[3]),r[4],r[5],r[6]||"–",P(r[7]),pp(r[8])];return i===A.length-1?{_s:"st",c}:c;}),{fs:6.8,numCols:[1,2,3,4,5,6,7,8]});
-  pdfH(d,"Mês a mês "+e2.ano+" — apurado × estimativa");
-  pdfTab(d,["Mês","ISS apurado","ISS estimativa","Apurado − estimativa","Estimativa ÷ apurado"],e2.mm.slice(1).map((r,i,A)=>{const c=[r[0],r[1]||"–",r[2]||"–",P(r[3]),pp(r[4])];return i===A.length-1?{_s:"st",c}:c;}),{numCols:[1,2,3,4]});}
+  pdfH(d,"Comparativo entre anos — apurado × ISS-Estimativa ("+ecPer().per+")");
+  pdfTab(d,["Ano","Receitas","Despesas","Sinistr.","Base","ISS apurado","ISS-Estimativa","Valor a provisionar","Estimativa ÷ apurado"],e2.t.slice(1).map((r,i,A)=>{const c=[String(r[0]),r[1],r[2],pp(r[3]),r[4],r[5],r[6]||"–",P(r[7]),pp(r[8])];return i===A.length-1?{_s:"st",c}:c;}),{fs:6.8,numCols:[1,2,3,4,5,6,7,8]});
+  pdfH(d,"Mês a mês "+e2.ano+" — apurado × ISS-Estimativa");
+  pdfTab(d,["Mês","ISS apurado","ISS-Estimativa","Valor a provisionar","ISS-Estimativa ÷ apurado"],e2.mm.slice(1).map((r,i,A)=>{const c=[r[0],r[1]||"–",r[2]||"–",P(r[3]),pp(r[4])];return i===A.length-1?{_s:"st",c}:c;}),{numCols:[1,2,3,4]});}
  pdfSalvar(d,"estatisticas-issqn-"+ST.ano+".pdf");
 }
 
@@ -2052,9 +2398,9 @@ function pdfEst(){
 const contTot=dd=>[["Total de receitas",dd.R,"rc"],["Total de despesas",dd.D,"dp"],["Base de cálculo do ISS (receitas - despesas)",dd.B,"bs"],["Valor do ISS apurado - alíquota "+fmt(ST.aliq)+"%"+(mUnico(dd.m)?"":" (soma das apurações mensais)"),dd.I,"im"]];
 function xlsCont(){
  const m=contMesSel(),dd=docDados(m),c=contLer(m);
- const o=timbreAoa("RELATÓRIO DE APURAÇÃO DO ISSQN").concat([[dd.per],["Alíquota (%)",ST.aliq],[],["Descrição","Valor (R$)"]],contTot(dd).map(r=>[r[0],r[1]]));
- o.push([],["Notas explicativas"]);(c.notas||"—").split("\n").forEach(l=>o.push([l]));
- o.push([],["Responsável",c.resp||""],["Cargo / função",c.cargo||""],["Local e data",(c.local?c.local+", ":"")+new Date().toLocaleDateString("pt-BR")],[],["Assinatura: ______________________________________"]);
+ const o=[["RELATÓRIO DE APURAÇÃO DO ISSQN"],["Emitido em "+new Date().toLocaleString("pt-BR")],[]].concat([[dd.per],["Alíquota (%)",ST.aliq],[],["Descrição","Valor (R$)"]],contTot(dd).map(r=>[r[0],r[1]]));
+ o.push([],["Notas explicativas"]);{const t=document.createElement("div");t.style.cssText="position:absolute;left:-9999px;white-space:normal";t.innerHTML=preencheHTML(fixoLer()+"<div><br></div>"+(c.nh||""),contVars(m));document.body.appendChild(t);const tx=t.innerText.trim();t.remove();(tx||"—").split("\n").forEach(l=>o.push([l]));}
+ const AS=assinLer();o.push([],[localData()],[],[],["______________________________","______________________________"],[AS[0].n,AS[1].n]);for(let j=0;j<Math.max(AS[0].l.length,AS[1].l.length);j++)o.push([AS[0].l[j]||"",AS[1].l[j]||""]);
  xlsSalvar("relatorio-contabil-issqn-"+ST.ano+mSuf(m)+".xlsx",[["Relatório contábil",xlsSheet(o,[52,20])]]);
 }
 function pdfCont(){
@@ -2062,8 +2408,8 @@ function pdfCont(){
  const d=pdfNovo("Relatório de Apuração do ISSQN",dd.per+" · alíquota "+fmt(ST.aliq)+"%",false,true);if(!d)return;
  pdfH(d,"1. Apuração do ISSQN");
  pdfTab(d,["Descrição","Valor (R$)"],contTot(dd).map(r=>({_s:r[2],c:[r[0],r[1]]})),{fs:9.5,numCols:[1],cs:{1:{cellWidth:48}}});d._y+=2;
- pdfH(d,"2. Notas explicativas");pdfP(d,c.notas||"—");
- pdfAssin(d,c);
+ pdfH(d,"2. Notas explicativas");{const V=contVars(m),fx=fixoLer();if(fx)pdfRich(d,preencheHTML(fx,V));if(c.notas||/<table/i.test(c.nh||""))pdfRich(d,preencheHTML(c.nh,V));else if(!fx)pdfP(d,"—");}
+ pdfAssin(d);
  pdfSalvar(d,"relatorio-contabil-issqn-"+ST.ano+mSuf(m)+".pdf");
 }
 
@@ -2251,12 +2597,13 @@ $("#bRec").onclick=()=>recolher(!document.body.classList.contains("recolhido"));
 try{recolher(localStorage.getItem("issqn.recolhido")==="1");}catch(e){}
 $("#bXl").onclick=()=>exportar("xlsx");
 $("#bPdf").onclick=()=>exportar("pdf");
-$("#bPrn").onclick=()=>window.print();
+$("#bPrn").onclick=()=>window.print();$("#bImp").onclick=()=>window.print();
 $("#bLogo").onclick=()=>$("#iLogo").click();
 $("#iLogo").onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const k=Math.min(1,600/img.width,200/img.height),c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);TB.logo=c.toDataURL("image/png");tbSalvar();contabil();};img.src=r.result;};r.readAsDataURL(f);};
 
 document.querySelectorAll("[data-tb]").forEach(el=>el.oninput=()=>{TB[el.dataset.tb]=txtCE(el);tbSalvar();});
-["#contNotas","#contResp","#contCargo","#contLocal"].forEach(s=>$(s).oninput=contSalvar);
+$("#contNotas").oninput=()=>{wNorm();contSalvar();};$("#contFixo").oninput=()=>{wNorm();fixoSalvar();};$("#contFixo").onblur=()=>{$("#contFixo").dataset.h="";contabil();};wIni();
+["#contAs1","#contAs2"].forEach(x=>{$(x).oninput=assinGravar;$(x).onblur=()=>{assinGravar();contabil();};$(x).addEventListener("paste",e=>{e.preventDefault();document.execCommand("insertText",false,(e.clipboardData||{getData:()=>""}).getData("text/plain"));});});
 $("#docLogo").ondblclick=()=>{if(TB.logo!==LOGO_FIXA&&confirm("Voltar para a logomarca padrão da Unimed Vale do Sepotuba?")){TB.logo=LOGO_FIXA;tbSalvar();contabil();}};
 $("#anX").onclick=()=>$("#an").close();
 const anIr=p=>{AN.pg=Math.max(0,Math.min(p,(AN._np||1)-1));anRender(true);$("#anWd").scrollTop=0;};
@@ -2313,7 +2660,7 @@ $("#usrExp").onclick=usrExportar;
 $("#usrImp").onclick=()=>$("#usrImpF").click();
 $("#usrImpF").onchange=e=>{const f=e.target.files[0];e.target.value="";if(f)usrImportar(f);};
 $("#bSalvaB").onclick=salvarNoArquivo;
-$("#bConf").onclick=conferir;$("#confX").onclick=()=>$("#conf").close();$("#confSo").onchange=conferir;$("#confXl").onclick=confXlsx;
+$("#bConf").onclick=conferir;$("#confX").onclick=()=>$("#conf").close();$("#confSo").onchange=conferir;$("#confXl").onclick=confXlsx;$("#confMapa").onclick=mapaVer;
 $("#hdLogo").src=$("#lgLogo").src=LOGO_FIXA;
 $("#bConP").onclick=conectarPasta;
 $("#bAtuP").onclick=()=>sincronizarPasta(true);
